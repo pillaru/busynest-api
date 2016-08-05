@@ -18,5 +18,10 @@
   "homepage": "https://github.com/chekkan/bizhub-api#readme",
   "dependencies": {
     "express": "^4.13.4"
+  },
+  "devDependencies": {
+    "browser-sync": "^2.14.0",
+    "gulp": "^3.9.1",
+    "gulp-nodemon": "^2.1.0"
   }
 }
