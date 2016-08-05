@@ -30,15 +30,17 @@ paths:
             size of returned array
           operationId: getTimesheets
           summary: 'get timesheets'
+          tags:
+          - timesheet
           # This is array of GET operation parameters:
           parameters:
-            # An example parameter that is in query and is required
-            -   name: size
-                in: query
-                description: Size of array
-                required: true
-                type: number
-                format: double
+          # An example parameter that is in query and is required
+          - name: size
+            in: query
+            description: Size of array
+            required: true
+            type: number
+            format: double
           # Expected responses for this operation:
           responses:
             # Response code
@@ -66,6 +68,8 @@ paths:
                 Gets a specific `Timesheet` object.
             operationId: getTimesheetById
             summary: 'get timesheet by id'
+            tags:
+            - timesheet
             parameters: 
             -   name: "id"
                 in: "path"
