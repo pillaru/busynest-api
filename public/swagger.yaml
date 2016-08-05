@@ -1,92 +1,117 @@
 swagger: '2.0'
 
-# This is your document metadata
 info:
-  version: "1.0.0"
+  version: 1.0.0
   title: Bizhub
+  description: Bizhub API resources and documentation
 
 host: localhost:3000
 
 basePath: /
 
 schemes: 
-    - http
+  - http
 
 consumes:
-    - application/json
+  - application/json
 
 produces:
-    - application/json
+  - application/json
 
-# Describe your paths here
 paths:
-    /timesheets:
-        # This is a HTTP operation
-        get:
-          # Describe this verb here. Note: you can use markdown
-          description: |
-            Gets `Timesheet` objects.
-            Optional query param of **size** determines
-            size of returned array
-          operationId: getTimesheets
-          summary: 'get timesheets'
-          tags:
-          - timesheet
-          # This is array of GET operation parameters:
-          parameters:
-          # An example parameter that is in query and is required
-          - name: size
-            in: query
-            description: Size of array
-            required: true
-            type: number
-            format: double
-          # Expected responses for this operation:
-          responses:
-            # Response code
-            200:
-                description: Successful response
-                # A schema describing your response object.
-                # Use JSON Schema format
-                schema:
-                    title: ArrayOfTimesheets
-                    type: array
-                    items:
-                      title: Timesheet
-                      type: object
-                      properties:
-                        id:
-                          type: number
-                          readOnly: true
-                        submit_date:
-                          type: string
-                          format: date-time
+  /timesheets:
+    get:
+      description: |
+        Gets list of `Timesheet` objects.
+      operationId: getTimesheets
+      summary: get timesheets
+      tags:
+      - timesheet
+      parameters:
+        - $ref: "#/parameters/from"
+        - $ref: "#/parameters/size"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            $ref: "#/definitions/Timesheets"
+        500:
+          $ref: "#/responses/Standard500ErrorResponse"
                           
-    /timesheets/{id}:
-        get:
-            description: |
-                Gets a specific `Timesheet` object.
-            operationId: getTimesheetById
-            summary: 'get timesheet by id'
-            tags:
-            - timesheet
-            parameters: 
-            -   name: "id"
-                in: "path"
-                description: "ID of pet to return"
-                required: true
-                type: "integer"
-                format: "int64"
-            responses:
-                200:
-                    description: Successful response
-                    schema:
-                        title: Timesheet
-                        type: object
-                        properties:
-                            id:
-                                type: number
-                                readOnly: true
-                            submit_date:
-                                type: string
-                                format: date-time
+  /timesheets/{timesheetId}:
+    get:
+      description: |
+          Gets a specific `Timesheet` object.
+      operationId: getTimesheetById
+      summary: 'get timesheet by id'
+      tags:
+      - timesheet
+      parameters: 
+      - $ref: "#/parameters/timesheetId"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            $ref: "#/definitions/Timesheet"
+        500:
+          $ref: "#/responses/Standard500ErrorResponse"
+
+definitions:
+  Error:
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+
+  Timesheet:
+    properties:
+      id:
+        type: integer
+        readOnly: true
+        minimum: 0
+        exclusiveMinimum: true
+      submit_date:
+        type: string
+        format: date-time
+  Timesheets:
+    type: array
+    items:
+      $ref: "#/definitions/Timesheet"
+
+parameters:
+  from:
+    name: from
+    in: query
+    description: first element to return starting at 1
+    required: false
+    type: integer
+    minimum: 0
+    exclusiveMinimum: false
+    default: 0
+
+  size:
+    name: size
+    in: query
+    description: max number of elements to return
+    required: false
+    type: integer
+    minimum: 0
+    exclusiveMinimum: true
+    maximum: 100
+    exclusiveMaximum: false
+    default: 10
+
+  timesheetId:
+    name: timesheetId
+    in: path
+    description: ID of timesheet to return
+    required: true
+    type: integer
+    format: int64
+
+responses:
+  Standard500ErrorResponse:
+    description: An unexpected error occured.
+    schema:
+      $ref: "#/definitions/Error"
