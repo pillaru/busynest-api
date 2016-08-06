@@ -111,6 +111,25 @@ paths:
             $ref: "#/definitions/Timesheet"
         500:
           $ref: "#/responses/Standard500ErrorResponse"
+          
+  /timesheets/{timesheetId}/entries:
+    get:
+      description: |
+        Gets timesheet entries for a specific entry
+      operationId: getTimesheetEntries
+      summary: get timesheet entries
+      tags:
+      - timesheet
+      - timesheet entry
+      paramters:
+      - $ref: "#/parameters/timesheetId"
+      responses:
+        200:
+          description: Successfull response
+          schema:
+            $ref: "#/definitions/TimesheetEntries"
+        500:
+          $ref: "#/responses/Standard500ErrorResponse"
 
 definitions:
   Error:
@@ -168,6 +187,10 @@ definitions:
         minimum: 0
         exclusiveMinimum: true
         example: 1
+      entries_url:
+        type: string
+        readonly: true
+        example: http://api.bizhub.io/timesheets/1/entries
       submit_date:
         type: string
         format: date-time
@@ -177,6 +200,30 @@ definitions:
     type: array
     items:
       $ref: "#/definitions/Timesheet"
+      
+  TimesheetEntry:
+    properties:
+      start:
+        type: string
+        format: date-time
+      end:
+        type: string
+        format: date-time
+      break:
+        type: number
+        format: double
+        example: 0.5
+      rate_per_hour:
+        type: number
+        format: double
+        example: 8.5
+      employer:
+        $ref: "#/definitions/Employer"
+  
+  TimesheetEntries:
+    type: array
+    items:
+      $ref: "#/definitions/TimesheetEntry"
 
 parameters:
   from:
