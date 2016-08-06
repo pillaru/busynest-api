@@ -130,6 +130,29 @@ paths:
             $ref: "#/definitions/TimesheetEntries"
         500:
           $ref: "#/responses/Standard500ErrorResponse"
+    post:
+      description: |
+        Create a Timesheet Entry for the specific timesheet
+      operationId: createTimesheetEntry
+      summary: create timesheet entry
+      tags:
+      - timesheet
+      - timesheet entry
+      parameters:
+      - $ref: "#/parameters/timesheetId"
+      - name: entry
+        description: timesheet entry to create
+        in: body
+        required: true
+        schema:
+          $ref: "#/definitions/TimesheetEntry"
+      responses:
+        201:
+          description: Successfully created timesheet entry
+          schema:
+            $ref: "#/definitions/TimesheetEntry"
+        500:
+          $ref: "#/responses/Standard500ErrorResponse"
 
 definitions:
   Error:
@@ -141,6 +164,12 @@ definitions:
         
   Employer:
     description: An employer
+    required:
+    - name
+    - address_line_1
+    - town_or_city
+    - country
+    - postcode
     properties:
       id:
         type: integer
@@ -202,6 +231,11 @@ definitions:
       $ref: "#/definitions/Timesheet"
       
   TimesheetEntry:
+    required:
+    - start
+    - end
+    - break
+    - rate_per_hour
     properties:
       start:
         type: string
