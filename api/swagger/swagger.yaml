@@ -121,7 +121,7 @@ paths:
       tags:
       - timesheet
       - timesheet entry
-      paramters:
+      parameters:
       - $ref: "#/parameters/timesheetId"
       responses:
         200:
@@ -189,7 +189,7 @@ definitions:
         example: 1
       entries_url:
         type: string
-        readonly: true
+        readOnly: true
         example: http://api.bizhub.io/timesheets/1/entries
       submit_date:
         type: string
