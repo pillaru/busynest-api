@@ -177,6 +177,10 @@ definitions:
         minimum: 0
         exclusiveMinimum: true
         example: 1
+      url:
+        type: string
+        readOnly: true
+        example: http://api.bizhub.io/employers/1234
       name:
         type: string
         description: name of the employer
@@ -216,6 +220,10 @@ definitions:
         minimum: 0
         exclusiveMinimum: true
         example: 1
+      url:
+        type: string
+        readOnly: true
+        example: http://api.bizhub.io/timesheets/1
       entries_url:
         type: string
         readOnly: true
@@ -237,6 +245,16 @@ definitions:
     - break
     - rate_per_hour
     properties:
+      id:
+        type: integer
+        readOnly: true
+        minimum: 0
+        exclusiveMinimum: true
+        example: 1234
+      url:
+        type: string
+        readOnly: true
+        example: http://api.bizhub.io/timesheets/1/entries/1234
       start:
         type: string
         format: date-time
