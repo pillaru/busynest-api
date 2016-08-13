@@ -1,11 +1,20 @@
 var express = require('express');
 var app = express();
+var mongoose = require('mongoose');
 
 // routes
 var timesheets = require('./routes/timesheets');
 var employers = require('./routes/employers');
 
 app.use(express.static('public'));
+
+mongoose.connect(connection_string);
+
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+db.once('open', function() {
+  console.log('connected to MongoDB');
+});
 
 app.use('/timesheets', timesheets);
 app.use('/employers', employers);
