@@ -15,7 +15,7 @@ var EmployerSchema = Schema({
     county: String,
     country: String,
     postcode: String
-});
+}, { versionKey: false });
 
 EmployerSchema.set('toObject', { getters:true });
 
@@ -23,7 +23,10 @@ EmployerSchema.virtual('url').get(function() {
     return "/employers/" + this.id;
 });
 
-EmployerSchema.plugin(autoIncrement.plugin, 'employers');
+EmployerSchema.plugin(autoIncrement.plugin, {
+    model: 'employers',
+    startAt: 1
+});
 
 var Employer = mongoose.model('employers', EmployerSchema);
 

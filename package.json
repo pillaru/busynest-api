@@ -17,7 +17,9 @@
   },
   "homepage": "https://github.com/chekkan/bizhub-api#readme",
   "dependencies": {
+    "body-parser": "^1.15.2",
     "express": "^4.13.4",
+    "express-validator": "^2.20.8",
     "mongodb": "^2.2.5",
     "mongoose": "^4.5.8",
     "mongoose-auto-increment": "^5.0.1"

@@ -50,7 +50,7 @@ paths:
         required: true
         description: employer to create
         schema:
-          $ref: "#/definitions/Employer"
+          $ref: "#/definitions/NewEmployer"
       responses:
         201:
           description: Sucessfully created employer
@@ -162,8 +162,8 @@ definitions:
       message:
         type: string
         
-  Employer:
-    description: An employer
+  NewEmployer:
+    description: Employer post model
     required:
     - name
     - address_line_1
@@ -171,16 +171,6 @@ definitions:
     - country
     - postcode
     properties:
-      id:
-        type: integer
-        readOnly: true
-        minimum: 0
-        exclusiveMinimum: true
-        example: 1
-      url:
-        type: string
-        readOnly: true
-        example: http://api.bizhub.io/employers/1234
       name:
         type: string
         description: name of the employer
@@ -207,6 +197,28 @@ definitions:
         type: string
         example: BL3 2JN
         
+  Employer:
+    description: An employer
+    allOf:
+    - $ref: '#/definitions/NewEmployer'
+    required:
+    - name
+    - address_line_1
+    - town_or_city
+    - country
+    - postcode
+    properties:
+      id:
+        type: integer
+        readOnly: true
+        minimum: 0
+        exclusiveMinimum: true
+        example: 1
+      url:
+        type: string
+        readOnly: true
+        example: http://api.bizhub.io/employers/1234
+
   Employers:
     type: array
     items:
