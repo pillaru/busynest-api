@@ -4,7 +4,7 @@ var Office = require('./../models/office'),
 function findByOrganization(orgId, req) {
     var deferred = Q.defer();
 
-    var query = Office.find({_organization: orgId});
+    var query = Office.find({organization: orgId}).populate('organization');
 
     query.exec().then(function(results) {
         var offices = results.map(function(office) {
@@ -14,6 +14,18 @@ function findByOrganization(orgId, req) {
     }).end(function(reason) {
         deferred.reject(reason);
     });
+    return deferred.promise;
+}
+
+function findById(id, req) {
+    var deferred = Q.defer();
+
+    var query = Office.findById(id).populate('organization');
+
+    query.exec().then(function(doc){
+        deferred.resolve(transformModel(doc, req));
+    }).end(deferred.reject);
+
     return deferred.promise;
 }
 
@@ -27,11 +39,13 @@ function create(orgId, newOffice, req) {
         county : newOffice.county,
         country : newOffice.country,
         postcode : newOffice.postcode,
-        _organization : orgId
+        organization : orgId
     }); 
     
     office.save().then(function(result) {
-        deferred.resolve(transformModel(result, req));
+        return findById(result._id, req);
+    }).then(function(result) {
+        deferred.resolve(result);
     }).end(deferred.reject);
     
     return deferred.promise;
@@ -42,11 +56,13 @@ function transformModel(doc, req) {
     var transformed = doc.toObject();
     transformed.url = urlBase + transformed.url;
     delete transformed._id;
-    delete transformed._organization;
+    delete transformed.organization._id;
+    transformed.organization.url = urlBase + transformed.organization.url;
     return transformed;
 }
 
 module.exports = {
+    findById : findById,
     findByOrganization : findByOrganization,
     create : create
 }

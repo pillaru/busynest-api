@@ -14,13 +14,13 @@ var OfficeSchema = Schema({
     county: String,
     country: String,
     postcode: String,
-    _organization: { type: Number, ref: 'organizations'}
+    organization: { type: Number, ref: 'organizations'}
 }, { versionKey: false });
 
 OfficeSchema.set('toObject', { getters:true });
 
 OfficeSchema.virtual('url').get(function() {
-    return "/organizations/" + this._organization + "/offices/" + this._id;
+    return "/organizations/" + this.organization._id + "/offices/" + this._id;
 });
 
 OfficeSchema.plugin(autoIncrement.plugin, {

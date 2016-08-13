@@ -248,7 +248,7 @@ definitions:
     properties:
       address_line_1:
         type: string
-        example: 2 Simple Stree
+        example: 2 Simple Street
       address_line_2:
         type: string
         example: Great Barnmouth

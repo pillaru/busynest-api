@@ -74,6 +74,16 @@ router.post('/:id/offices', function(req, res) {
         console.log(reason)
         res.sendStatus(500);
     });
-})
+});
+
+// organizations/{id}/offices/{id}
+router.get('/:id/offices/:oid', function(req, res) {
+    officeService.findById(req.params.oid, req).then(function(office) {
+        res.send(office);
+    }).catch(function(reason) {
+        console.log(reason)
+        res.sendStatus(500);
+    });
+});
 
 module.exports = router;
