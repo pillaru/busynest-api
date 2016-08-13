@@ -22,7 +22,9 @@
     "express-validator": "^2.20.8",
     "mongodb": "^2.2.5",
     "mongoose": "^4.5.8",
-    "mongoose-auto-increment": "^5.0.1"
+    "mongoose-auto-increment": "^5.0.1",
+    "promise": "^7.1.1",
+    "q": "^1.4.1"
   },
   "devDependencies": {
     "browser-sync": "^2.14.0",

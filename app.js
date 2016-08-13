@@ -20,8 +20,8 @@ db.once('open', function() {
 });
 
 // routes
-var timesheetEntries = require('./routes/timesheets-entries');
-var employers = require('./routes/organizations');
+var timesheetEntries = require('./app/routes/timesheets-entries');
+var employers = require('./app/routes/organizations');
 
 app.use('/timesheet-entries', timesheetEntries);
 app.use('/organizations', employers);
