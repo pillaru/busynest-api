@@ -6,7 +6,7 @@ var bodyParser = require('body-parser');
 
 // routes
 var timesheets = require('./routes/timesheets');
-var employers = require('./routes/employers');
+var employers = require('./routes/organizations');
 
 app.use(express.static('public'));
 app.use(bodyParser.json()); // support json encoded bodies
@@ -24,7 +24,7 @@ db.once('open', function() {
 });
 
 app.use('/timesheets', timesheets);
-app.use('/employers', employers);
+app.use('/organizations', employers);
 
 app.listen(5000, function () {
     console.log('Example app listening on port 5000!');
