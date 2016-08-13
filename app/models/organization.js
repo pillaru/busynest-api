@@ -17,6 +17,10 @@ OrganizationSchema.virtual('url').get(function() {
     return "/organizations/" + this.id;
 });
 
+OrganizationSchema.virtual('offices_url').get(function() {
+    return "/organizations/" + this.id + "/offices";
+});
+
 OrganizationSchema.plugin(autoIncrement.plugin, {
     model: 'organizations',
     startAt: 1

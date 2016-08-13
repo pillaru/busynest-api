@@ -8,11 +8,7 @@ function find(req) {
 
     query.exec().then(function(results) {
         var organizations = results.map(function(organization) {
-            var urlBase = req.protocol + '://' + req.get('host');
-            var transformed = organization.toObject();
-            transformed.url = urlBase + transformed.url;
-            delete transformed._id;
-            return transformed;
+            return transformModel(organization, req);
         });
         deferred.resolve(organizations);
     }).end(function(reason) {
@@ -27,11 +23,7 @@ function findById(id, req) {
     var query = Organization.findById(id);
 
     query.exec().then(function(doc){
-        var urlBase = req.protocol + '://' + req.get('host');
-        var transformed = doc.toObject();
-        transformed.url = urlBase + transformed.url;
-        delete transformed._id;
-        deferred.resolve(transformed);
+        deferred.resolve(transformModel(doc, req));
     }).end(deferred.reject);
 
     return deferred.promise;
@@ -39,16 +31,23 @@ function findById(id, req) {
 
 function create(newOrganization, req) {
     var deferred = Q.defer();
+    
     var organization = new Organization({name : newOrganization.name}); 
+    
     organization.save().then(function(result) {
-        console.log(result);
-        var transformed = organization.toObject();
-        var urlBase = req.protocol + '://' + req.get('host');
-        transformed.url = urlBase + transformed.url;
-        delete transformed._id;
-        deferred.resolve(transformed);
+        deferred.resolve(transformModel(result, req));
     }).end(deferred.reject);
+    
     return deferred.promise;
+}
+
+function transformModel(doc, req) {
+    var urlBase = req.protocol + '://' + req.get('host');
+    var transformed = doc.toObject();
+    transformed.url = urlBase + transformed.url;
+    transformed.offices_url = urlBase + transformed.offices_url;
+    delete transformed._id;
+    return transformed;
 }
 
 module.exports = {
