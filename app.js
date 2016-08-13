@@ -4,10 +4,6 @@ var expressValidator = require('express-validator');
 var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 
-// routes
-var timesheets = require('./routes/timesheets');
-var employers = require('./routes/organizations');
-
 app.use(express.static('public'));
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(expressValidator()); // this line must be immediately after bodyParser.json()!
@@ -23,7 +19,11 @@ db.once('open', function() {
   console.log('connected to MongoDB');
 });
 
-app.use('/timesheets', timesheets);
+// routes
+var timesheetEntries = require('./routes/timesheets-entries');
+var employers = require('./routes/organizations');
+
+app.use('/timesheet-entries', timesheetEntries);
 app.use('/organizations', employers);
 
 app.listen(5000, function () {
