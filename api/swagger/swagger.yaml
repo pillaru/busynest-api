@@ -19,14 +19,14 @@ produces:
   - application/json
 
 paths:
-  /employers:
+  /organizations:
     get:
       description: |
-        Gets list of `Employer` objects.
-      operationId: getEmployers
-      summary: get employers
+        Gets list of Organizations.
+      operationId: getOrganizations
+      summary: get organizations
       tags:
-      - employer
+      - organization
       parameters:
       - $ref: "#/parameters/from"
       - $ref: "#/parameters/size"
@@ -34,55 +34,60 @@ paths:
         200:
           description: Sucessful response
           schema:
-            $ref: "#/definitions/Employers"
+            $ref: "#/definitions/Organizations"
         500:
           $ref: "#/responses/Standard500ErrorResponse"
     post:
       description: |
-        Create a new `Employer`
-      operationId: createEmployer
-      summary: create employer
+        Create a new `Organization`
+      operationId: createOrganization
+      summary: create organization
       tags:
-      - employer
+      - organization
       parameters:
-      - name: employer
+      - name: organization
         in: body
         required: true
-        description: employer to create
+        description: organization to create
         schema:
-          $ref: "#/definitions/NewEmployer"
+          $ref: "#/definitions/NewOrganization"
       responses:
         201:
-          description: Sucessfully created employer
+          description: Sucessfully created organization
           schema:
-            $ref: "#/definitions/Employer"
+            $ref: "#/definitions/Organization"
   
-  /employers/{employerId}:
+  /organizations/{id}:
     get:
       description: |
-        Get a specific `Employer`
-      operationId: getEmployerById
-      summary: get employer by id
+        Get a specific `Organization`
+      operationId: getOrganizationById
+      summary: get organization by id
       tags:
-      - employer
+      - organization
       parameters:
-      - $ref: "#/parameters/employerId"
+      - name: id
+        in: path
+        description: ID of organization to return
+        required: true
+        type: integer
+        format: int64
       responses:
         200:
           description: Sucessfull response
           schema:
-            $ref: "#/definitions/Employer"
+            $ref: "#/definitions/Organization"
         500:
           $ref: "#/responses/Standard500ErrorResponse"
           
-  /timesheets:
+  /timesheet-entries:
     get:
       description: |
-        Gets list of `Timesheet` objects.
-      operationId: getTimesheets
-      summary: get timesheets
+        Gets list of timesheet entries
+      operationId: getTimesheetsEntries
+      summary: get timesheet entries
       tags:
-      - timesheet
+      - timesheet entry
       parameters:
       - $ref: "#/parameters/from"
       - $ref: "#/parameters/size"
@@ -90,46 +95,10 @@ paths:
         200:
           description: Successful response
           schema:
-            $ref: "#/definitions/Timesheets"
-        500:
-          $ref: "#/responses/Standard500ErrorResponse"
-                          
-  /timesheets/{timesheetId}:
-    get:
-      description: |
-          Gets a specific `Timesheet` object.
-      operationId: getTimesheetById
-      summary: 'get timesheet by id'
-      tags:
-      - timesheet
-      parameters: 
-      - $ref: "#/parameters/timesheetId"
-      responses:
-        200:
-          description: Successful response
-          schema:
-            $ref: "#/definitions/Timesheet"
-        500:
-          $ref: "#/responses/Standard500ErrorResponse"
-          
-  /timesheets/{timesheetId}/entries:
-    get:
-      description: |
-        Gets timesheet entries for a specific entry
-      operationId: getTimesheetEntries
-      summary: get timesheet entries
-      tags:
-      - timesheet
-      - timesheet entry
-      parameters:
-      - $ref: "#/parameters/timesheetId"
-      responses:
-        200:
-          description: Successfull response
-          schema:
             $ref: "#/definitions/TimesheetEntries"
         500:
           $ref: "#/responses/Standard500ErrorResponse"
+    
     post:
       description: |
         Create a Timesheet Entry for the specific timesheet
@@ -139,7 +108,6 @@ paths:
       - timesheet
       - timesheet entry
       parameters:
-      - $ref: "#/parameters/timesheetId"
       - name: entry
         description: timesheet entry to create
         in: body
@@ -153,6 +121,29 @@ paths:
             $ref: "#/definitions/TimesheetEntry"
         500:
           $ref: "#/responses/Standard500ErrorResponse"
+                          
+  /timesheets-entries/{id}:
+    get:
+      description: |
+          Gets a specific `Timesheet` object.
+      operationId: getTimesheetById
+      summary: 'get timesheet by id'
+      tags:
+      - timesheet
+      parameters: 
+      - name: id
+        in: path
+        description: ID of timesheet entry to return
+        required: true
+        type: integer
+        format: int64
+      responses:
+        200:
+          description: Successful response
+          schema:
+            $ref: "#/definitions/TimesheetEntry"
+        500:
+          $ref: "#/responses/Standard500ErrorResponse"
 
 definitions:
   Error:
@@ -162,51 +153,20 @@ definitions:
       message:
         type: string
         
-  NewEmployer:
-    description: Employer post model
+  NewOrganization:
+    description: Organization post model
     required:
     - name
-    - address_line_1
-    - town_or_city
-    - country
-    - postcode
     properties:
       name:
         type: string
         description: name of the employer
         example: NHS
-      address_line_1:
-        type: string
-        description: address line 1
-        example: 2 Simple Street
-      address_line_2:
-        type: string
-        description: address line 2
-        example: Great Lever
-      town_or_city:
-        type: string
-        description: town or city
-        example: Bolton
-      county:
-        type: string
-        example: Lancashire
-      country:
-        type: string
-        example: United Kingdom
-      postcode:
-        type: string
-        example: BL3 2JN
         
-  Employer:
-    description: An employer
+  Organization:
+    description: An organization
     allOf:
-    - $ref: '#/definitions/NewEmployer'
-    required:
-    - name
-    - address_line_1
-    - town_or_city
-    - country
-    - postcode
+    - $ref: '#/definitions/NewOrganization'
     properties:
       id:
         type: integer
@@ -219,36 +179,10 @@ definitions:
         readOnly: true
         example: http://api.bizhub.io/employers/1234
 
-  Employers:
+  Organizations:
     type: array
     items:
-      $ref: "#/definitions/Employer"
-
-  Timesheet:
-    properties:
-      id:
-        type: integer
-        readOnly: true
-        minimum: 0
-        exclusiveMinimum: true
-        example: 1
-      url:
-        type: string
-        readOnly: true
-        example: http://api.bizhub.io/timesheets/1
-      entries_url:
-        type: string
-        readOnly: true
-        example: http://api.bizhub.io/timesheets/1/entries
-      submit_date:
-        type: string
-        format: date-time
-        description: date timesheet submitted
-        
-  Timesheets:
-    type: array
-    items:
-      $ref: "#/definitions/Timesheet"
+      $ref: "#/definitions/Organization"
       
   TimesheetEntry:
     required:
@@ -281,8 +215,6 @@ definitions:
         type: number
         format: double
         example: 8.5
-      employer:
-        $ref: "#/definitions/Employer"
   
   TimesheetEntries:
     type: array
@@ -311,22 +243,6 @@ parameters:
     maximum: 100
     exclusiveMaximum: false
     default: 10
-
-  timesheetId:
-    name: timesheetId
-    in: path
-    description: ID of timesheet to return
-    required: true
-    type: integer
-    format: int64
-    
-  employerId:
-    name: employerId
-    in: path
-    description: ID of employer to return
-    required: true
-    type: integer
-    format: int64
 
 responses:
   Standard500ErrorResponse:
