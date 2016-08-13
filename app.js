@@ -8,9 +8,12 @@ var employers = require('./routes/employers');
 
 app.use(express.static('public'));
 
+var connection_string = 'mongodb://localhost:27017/bizhub';
+
 mongoose.connect(connection_string);
 
 var db = mongoose.connection;
+
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 db.once('open', function() {
   console.log('connected to MongoDB');

@@ -19,7 +19,8 @@
   "dependencies": {
     "express": "^4.13.4",
     "mongodb": "^2.2.5",
-    "mongoose": "^4.5.8"
+    "mongoose": "^4.5.8",
+    "mongoose-auto-increment": "^5.0.1"
   },
   "devDependencies": {
     "browser-sync": "^2.14.0",

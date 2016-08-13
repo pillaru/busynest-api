@@ -12,6 +12,7 @@ router.get('/', function (req, res) {
         var employers = results.map(function(employer) {
             var transformed = employer.toObject();
             transformed.url = urlBase + transformed.url;
+            delete transformed._id;
             return transformed;
         });
         res.send(employers);

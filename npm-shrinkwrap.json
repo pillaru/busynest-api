@@ -2147,6 +2147,11 @@
         }
       }
     },
+    "mongoose-auto-increment": {
+      "version": "5.0.1",
+      "from": "mongoose-auto-increment@latest",
+      "resolved": "https://registry.npmjs.org/mongoose-auto-increment/-/mongoose-auto-increment-5.0.1.tgz"
+    },
     "mpath": {
       "version": "0.2.1",
       "from": "mpath@0.2.1",
