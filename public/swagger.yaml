@@ -80,6 +80,57 @@ paths:
         500:
           $ref: "#/responses/Standard500ErrorResponse"
           
+  /organizations/{id}/offices:
+    get:
+      description: |
+        Get offices of an `Organization`
+      operationId: getOrganizationOffices
+      summary: get organization offices
+      tags:
+      - organization
+      parameters:
+      - name: id
+        in: path
+        description: ID of organization
+        required: true
+        type: integer
+        format: int64
+      responses:
+        200:
+          description: Successfull response
+          schema:
+            $ref: "#/definitions/Offices"
+        500:
+          $ref: "#/responses/Standard500ErrorResponse"
+      
+    post:
+      description: |
+        Create new office for the organization
+      operationId: createOrganizationOffice
+      summary: create organization office
+      tags:
+      - organization
+      parameters:
+      - name: id
+        in: path
+        description: ID of organization
+        required: true
+        type: integer
+        format: int64
+      - name: office
+        in: body
+        required: true
+        description: office to create
+        schema:
+          $ref: "#/definitions/NewOffice"
+      responses:
+        201:
+          description: Created successfully
+          schema:
+            $ref: "#/definitions/Office"
+        500:
+          $ref: "#/responses/Standard500ErrorResponse"
+          
   /timesheet-entries:
     get:
       description: |
@@ -173,16 +224,70 @@ definitions:
         readOnly: true
         minimum: 0
         exclusiveMinimum: true
-        example: 1
+        example: 1234
       url:
         type: string
         readOnly: true
-        example: http://api.bizhub.io/employers/1234
+        example: http://api.bizhub.io/organizations/1234
+      offices_url:
+        type: string
+        readOnly: true
+        example: http://api.bizhub.io/organizations/1234/offices
 
   Organizations:
     type: array
     items:
       $ref: "#/definitions/Organization"
+  
+  NewOffice:
+    description: New office model
+    required:
+    - address_line_1
+    - town_or_city
+    - country
+    - postcode
+    properties:
+      address_line_1:
+        type: string
+        example: 2 Simple Stree
+      address_line_2:
+        type: string
+        example: Great Barnmouth
+      town_or_city:
+        type: string
+        example: London
+      county:
+        type: string
+        example: Greater London
+      country:
+        type: string
+        example: United Kingdom
+      postcode:
+        type: string
+        example: SE11 5JW
+  
+  Office:
+    description: An office
+    allOf:
+    - $ref: "#/definitions/NewOffice"
+    properties:
+      id:
+        type: integer
+        readOnly: true
+        minimum: 0
+        exclusiveMinimum: true
+        example: 231
+      url:
+        type: string
+        readOnly: true
+        example: http://api.bizhub.io/organizations/1234/offices/231
+      organization:
+        $ref: "#/definitions/Organization"
+        
+  Offices:
+    type: array
+    items:
+      $ref: "#/definitions/Office"
       
   TimesheetEntry:
     required:
