@@ -20,18 +20,14 @@ router.get('/', function (req, res) {
 
 router.get('/:id', function(req, res) {
     var urlBase = req.protocol + '://' + req.get('host')
-    var employer = {
-        "id": 1,
-        "url": urlBase + "/employers/1234",
-        "name": "NHS",
-        "address_line_1": "2 Simple Street",
-        "address_line_2": "Great Lever",
-        "town_or_city": "Bolton",
-        "county": "Lancashire",
-        "country": "United Kingdom",
-        "postcode": "BL3 2JN"
-    };
-    res.send(employer);
+    Employer.findById(req.params.id, function(err, doc) {
+        if(err) {
+            throw err;
+        }
+        var transformed = doc.toObject();
+        transformed.url = urlBase + transformed.url;
+        res.send(transformed);
+    });
 });
 
 module.exports = router;
