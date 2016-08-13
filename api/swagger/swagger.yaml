@@ -156,7 +156,6 @@ paths:
       operationId: createTimesheetEntry
       summary: create timesheet entry
       tags:
-      - timesheet
       - timesheet entry
       parameters:
       - name: entry
@@ -164,7 +163,7 @@ paths:
         in: body
         required: true
         schema:
-          $ref: "#/definitions/TimesheetEntry"
+          $ref: "#/definitions/NewTimesheetEntry"
       responses:
         201:
           description: Successfully created timesheet entry
@@ -180,7 +179,7 @@ paths:
       operationId: getTimesheetById
       summary: 'get timesheet by id'
       tags:
-      - timesheet
+      - timesheet entry
       parameters: 
       - name: id
         in: path
@@ -289,7 +288,31 @@ definitions:
     items:
       $ref: "#/definitions/Office"
       
+  NewTimesheetEntry:
+    required:
+    - start
+    - end
+    - break
+    - rate_per_hour
+    properties:
+      start:
+        type: string
+        format: date-time
+      end:
+        type: string
+        format: date-time
+      break:
+        type: number
+        format: double
+        example: 0.5
+      rate_per_hour:
+        type: number
+        format: double
+        example: 8.5
+      
   TimesheetEntry:
+    allOf:
+    - $ref: "#/definitions/NewTimesheetEntry"
     required:
     - start
     - end
@@ -306,20 +329,6 @@ definitions:
         type: string
         readOnly: true
         example: http://api.bizhub.io/timesheets/1/entries/1234
-      start:
-        type: string
-        format: date-time
-      end:
-        type: string
-        format: date-time
-      break:
-        type: number
-        format: double
-        example: 0.5
-      rate_per_hour:
-        type: number
-        format: double
-        example: 8.5
   
   TimesheetEntries:
     type: array

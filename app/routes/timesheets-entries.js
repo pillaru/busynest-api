@@ -1,19 +1,33 @@
-var express = require('express');
-var router = express.Router();
+var express = require('express'),
+    router = express.Router(),
+    timesheetEntryService = require('./../services/timesheet-entry-service');
 
 router.get('/', function(req, res) {
-    var urlBase = req.protocol + '://' + req.get('host')    
-    var entries = [
-        {
-            "id": 1234,
-            "url": urlBase + "/timesheet-entries/1234",
-            "start": "2016-08-12T19:22:31.472Z",
-            "end": "2016-08-12T19:22:31.472Z",
-            "break": 0.5,
-            "rate_per_hour": 8.5
-        }
-    ]
-    res.send(entries);
+    timesheetEntryService.find(req).then(function(entries){
+        res.send(entries);
+    }).catch(function(reason){
+        console.log(reason);
+        res.sendStatus(500);
+    });
+});
+
+router.post('/', function(req, res) {
+    req.checkBody('start', 'Start is required').notEmpty();
+    req.checkBody('end', 'End is required').notEmpty();
+    req.checkBody('break', 'Break is required').notEmpty();
+    req.checkBody('rate_per_hour', 'Rate Per Hour is required').notEmpty();
+
+    timesheetEntryService.create({
+        start: req.body.start,
+        end: req.body.end,
+        break: req.body.break,
+        rate_per_hour: req.body.rate_per_hour
+    }, req).then(function(entry) {
+        res.send(entry);
+    }).catch(function(reason){
+        console.log(reason);
+        res.sendStatus(500);
+    });
 });
 
 module.exports = router;
