@@ -1,25 +1,24 @@
-var mongoose = require('mongoose'),
-    Schema = mongoose.Schema,
-    autoIncrement = require('mongoose-auto-increment');
+const mongoose = require('mongoose');
+const autoIncrement = require('mongoose-auto-increment');
 
-var connection_string = 'mongodb://localhost:27017/bizhub';
-var connection = mongoose.createConnection(connection_string);
- 
+const Schema = mongoose.Schema;
+
+const connectionString = 'mongodb://localhost:27017/bizhub';
+const connection = mongoose.createConnection(connectionString);
+
 autoIncrement.initialize(connection);
 
-var TimesheetEntrySchema = Schema({
+const TimesheetEntrySchema = Schema({
     start: Date,
     end: Date,
     break: Number,
     rate_per_hour: Number,
-    employer_office: {type: Number, ref: 'offices'}
+    employer_office: { type: Number, ref: 'offices' }
 }, { versionKey: false });
 
-TimesheetEntrySchema.set('toObject', { getters:true });
+TimesheetEntrySchema.set('toObject', { getters: true });
 
-TimesheetEntrySchema.virtual('url').get(function() {
-    return "/timesheet-entries/" + this._id;
-});
+TimesheetEntrySchema.virtual('url').get(() => `/timesheet-entries/${this._id}`);
 
 TimesheetEntrySchema.plugin(autoIncrement.plugin, {
     model: 'timesheet-entries',

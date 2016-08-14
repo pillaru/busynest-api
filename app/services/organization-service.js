@@ -1,28 +1,35 @@
-var Organization = require('./../models/organization'),
-    Q = require('q');
+const Organization = require('./../models/organization');
+const Q = require('q');
+
+function transformModel(doc, req) {
+    const urlBase = `${req.protocol}://${req.get('host')}`;
+    const transformed = doc.toObject();
+    transformed.url = urlBase + transformed.url;
+    transformed.offices_url = urlBase + transformed.offices_url;
+    delete transformed._id;
+    return transformed;
+}
 
 function find(req) {
-    var deferred = Q.defer();
+    const deferred = Q.defer();
 
-    var query = Organization.find({});
+    const query = Organization.find({});
 
-    query.exec().then(function(results) {
-        var organizations = results.map(function(organization) {
-            return transformModel(organization, req);
-        });
+    query.exec().then((results) => {
+        const organizations = results.map((organization) => transformModel(organization, req));
         deferred.resolve(organizations);
-    }).end(function(reason) {
+    }).end((reason) => {
         deferred.reject(reason);
     });
     return deferred.promise;
 }
 
 function findById(id, req) {
-    var deferred = Q.defer();
+    const deferred = Q.defer();
 
-    var query = Organization.findById(id);
+    const query = Organization.findById(id);
 
-    query.exec().then(function(doc){
+    query.exec().then((doc) => {
         deferred.resolve(transformModel(doc, req));
     }).end(deferred.reject);
 
@@ -30,28 +37,19 @@ function findById(id, req) {
 }
 
 function create(newOrganization, req) {
-    var deferred = Q.defer();
-    
-    var organization = new Organization({name : newOrganization.name}); 
-    
-    organization.save().then(function(result) {
+    const deferred = Q.defer();
+
+    const organization = new Organization({ name: newOrganization.name });
+
+    organization.save().then((result) => {
         deferred.resolve(transformModel(result, req));
     }).end(deferred.reject);
-    
+
     return deferred.promise;
 }
 
-function transformModel(doc, req) {
-    var urlBase = req.protocol + '://' + req.get('host');
-    var transformed = doc.toObject();
-    transformed.url = urlBase + transformed.url;
-    transformed.offices_url = urlBase + transformed.offices_url;
-    delete transformed._id;
-    return transformed;
-}
-
 module.exports = {
-    find : find, 
-    findById : findById,
-    create: create
-}
+    find,
+    findById,
+    create
+};

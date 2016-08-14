@@ -1,27 +1,27 @@
-var mongoose = require('mongoose'),
-    Schema = mongoose.Schema,
-    autoIncrement = require('mongoose-auto-increment');
+const mongoose = require('mongoose');
+const autoIncrement = require('mongoose-auto-increment');
 
-var connection_string = 'mongodb://localhost:27017/bizhub';
-var connection = mongoose.createConnection(connection_string);
- 
+const Schema = mongoose.Schema;
+
+const connectionString = 'mongodb://localhost:27017/bizhub';
+const connection = mongoose.createConnection(connectionString);
+
 autoIncrement.initialize(connection);
 
-var OfficeSchema = Schema({
+const OfficeSchema = Schema({
     address_line_1: String,
     address_line_2: String,
     town_or_city: String,
     county: String,
     country: String,
     postcode: String,
-    organization: { type: Number, ref: 'organizations'}
+    organization: { type: Number, ref: 'organizations' }
 }, { versionKey: false });
 
-OfficeSchema.set('toObject', { getters:true });
+OfficeSchema.set('toObject', { getters: true });
 
-OfficeSchema.virtual('url').get(function() {
-    return "/organizations/" + this.organization._id + "/offices/" + this._id;
-});
+OfficeSchema.virtual('url').get(() =>
+    `/organizations/${this.organization._id}/offices/${this._id}`);
 
 OfficeSchema.plugin(autoIncrement.plugin, {
     model: 'offices',
