@@ -1,5 +1,4 @@
 const gulp = require('gulp');
-const browserSync = require('browser-sync');
 const nodemon = require('gulp-nodemon');
 const eslint = require('gulp-eslint');
 
@@ -9,40 +8,33 @@ gulp.task('swagger', () => {
 });
 
 const jsFiles = ['*.js', 'app/**/*.js'];
+const swaggerFiles = ['./api/swagger/swagger.yaml'];
 
-gulp.task('lint', () => {
+gulp.task('lint', () =>
     gulp.src(jsFiles)
         .pipe(eslint())
         .pipe(eslint.format())
-        .pipe(eslint.failAfterError());
-});
+        .pipe(eslint.failAfterError())
+);
 
-gulp.task('browser-sync', ['nodemon'], () => {
-    browserSync.init(null, {
-        proxy: 'http://localhost:5000',
-        files: ['public/**/*.*'],
-        browser: 'google chrome',
-        port: 7000
-    });
-});
-
-gulp.task('nodemon', (cb) => {
+gulp.task('serve', ['swagger', 'lint'], (cb) => {
     let started = false;
-    return nodemon({
-        script: 'app.js'
-    }).on('start', () => {
-        // to avoid nodemon being started multiple times
-        // thanks @matthisk
-        if (!started) {
-            cb();
-            started = true;
-        }
-    });
+    const options = {
+        script: 'app.js',
+        delayTime: 1,
+        env: {
+            PORT: 5000
+        },
+        watch: [jsFiles, swaggerFiles],
+        tasks: ['swagger', 'lint']
+    };
+    return nodemon(options)
+        .on('start', () => {
+            // to avoid nodemon being started multiple times
+            // thanks @matthisk
+            if (!started) {
+                cb();
+                started = true;
+            }
+        });
 });
-
-// Rerun the task when a file changes
-gulp.task('watch', () => {
-    gulp.watch('./api/swagger/swagger.yaml', ['swagger']);
-});
-
-gulp.task('default', ['watch', 'swagger', 'browser-sync']);
