@@ -18,6 +18,18 @@ function find(req) {
     return deferred.promise;
 }
 
+function findById(id, req) {
+    var deferred = Q.defer();
+
+    var query = TimesheetEntry.findById(id);
+
+    query.exec().then(function(doc) {
+        deferred.resolve(transformModel(doc, req));
+    }).end(deferred.reject);
+
+    return deferred.promise;
+}
+
 function create(newEntry, req) {
     var deferred = Q.defer();
     
@@ -45,5 +57,6 @@ function transformModel(doc, req) {
 
 module.exports = {
     find : find,
+    findById : findById,
     create : create
 }

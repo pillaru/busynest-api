@@ -30,4 +30,13 @@ router.post('/', function(req, res) {
     });
 });
 
+router.get('/:id', function(req, res) {
+    timesheetEntryService.findById(req.params.id, req).then(function(entry) {
+        res.send(entry);
+    }).catch(function(reason) {
+        console.log(reason);
+        res.sendStatus(500);
+    });
+});
+
 module.exports = router;
