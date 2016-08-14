@@ -293,11 +293,8 @@ definitions:
       postcode:
         type: string
         example: SE11 5JW
-  
-  Office:
-    description: An office
-    allOf:
-    - $ref: "#/definitions/NewOffice"
+        
+  OfficeIdentifier:
     properties:
       id:
         type: integer
@@ -305,6 +302,15 @@ definitions:
         minimum: 0
         exclusiveMinimum: true
         example: 231
+  
+  Office:
+    description: An office
+    allOf:
+    - $ref: "#/definitions/NewOffice"
+    - $ref: "#/definitions/OfficeIdentifier"
+    required:
+    - address_line_1
+    properties:
       url:
         type: string
         readOnly: true
@@ -316,13 +322,8 @@ definitions:
     type: array
     items:
       $ref: "#/definitions/Office"
-      
-  NewTimesheetEntry:
-    required:
-    - start
-    - end
-    - break
-    - rate_per_hour
+            
+  TimesheetEntryBase:
     properties:
       start:
         type: string
@@ -338,15 +339,29 @@ definitions:
         type: number
         format: double
         example: 8.5
-      
-  TimesheetEntry:
-    allOf:
-    - $ref: "#/definitions/NewTimesheetEntry"
+        
+  NewTimesheetEntry:
+    allOf: 
+    - $ref: "#/definitions/TimesheetEntryBase"
     required:
     - start
     - end
     - break
     - rate_per_hour
+    - employer_office
+    properties:
+      employer_office:
+        $ref: "#/definitions/OfficeIdentifier"
+      
+  TimesheetEntry:
+    allOf:
+    - $ref: "#/definitions/TimesheetEntryBase"
+    required:
+    - start
+    - end
+    - break
+    - rate_per_hour
+    - employer_office
     properties:
       id:
         type: integer
@@ -358,6 +373,8 @@ definitions:
         type: string
         readOnly: true
         example: http://api.bizhub.io/timesheets/1/entries/1234
+      employer_office:
+        $ref: "#/definitions/Office"
   
   TimesheetEntries:
     type: array
