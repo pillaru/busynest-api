@@ -12,12 +12,22 @@ router.get('/', function(req, res) {
 });
 
 router.post('/', function(req, res) {
+    req.checkBody('employer_office.id', 'Employer\'s office identifier is required').notEmpty();
     req.checkBody('start', 'Start is required').notEmpty();
     req.checkBody('end', 'End is required').notEmpty();
     req.checkBody('break', 'Break is required').notEmpty();
     req.checkBody('rate_per_hour', 'Rate Per Hour is required').notEmpty();
 
+    var errors = req.validationErrors();
+    if (errors) {
+        res.status(400).json(errors);
+        return;
+    }
+
     timesheetEntryService.create({
+        employer_office: { 
+            id : req.body.employer_office.id 
+        },
         start: req.body.start,
         end: req.body.end,
         break: req.body.break,

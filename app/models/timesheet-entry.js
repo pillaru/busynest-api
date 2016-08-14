@@ -11,7 +11,8 @@ var TimesheetEntrySchema = Schema({
     start: Date,
     end: Date,
     break: Number,
-    rate_per_hour: Number
+    rate_per_hour: Number,
+    employer_office: {type: Number, ref: 'offices'}
 }, { versionKey: false });
 
 TimesheetEntrySchema.set('toObject', { getters:true });
