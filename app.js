@@ -2,6 +2,7 @@ const express = require('express');
 const expressValidator = require('express-validator');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
 const app = express();
 
@@ -23,6 +24,8 @@ db.once('open', () => {
 // routes
 const timesheetEntries = require('./app/routes/timesheets-entries');
 const employers = require('./app/routes/organizations');
+
+app.use(cors());
 
 app.use('/timesheet-entries', timesheetEntries);
 app.use('/organizations', employers);
