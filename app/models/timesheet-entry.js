@@ -16,13 +16,16 @@ const TimesheetEntrySchema = Schema({
     employer_office: { type: Number, ref: 'offices' }
 }, { versionKey: false });
 
-TimesheetEntrySchema.set('toObject', { getters: true });
-
-TimesheetEntrySchema.virtual('url').get(() => `/timesheet-entries/${this._id}`);
 
 TimesheetEntrySchema.plugin(autoIncrement.plugin, {
     model: 'timesheet-entries',
     startAt: 1
+});
+
+TimesheetEntrySchema.set('toObject', { getters: true, virtuals: true });
+
+TimesheetEntrySchema.virtual('url').get(function() {
+  return `/timesheet-entries/${this._id}`;
 });
 
 module.exports = mongoose.model('timesheet-entries', TimesheetEntrySchema);

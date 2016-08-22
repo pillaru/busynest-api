@@ -17,7 +17,7 @@ gulp.task('lint', () =>
         .pipe(eslint.failAfterError())
 );
 
-gulp.task('serve', ['swagger', 'lint'], (cb) => {
+gulp.task('serve', ['swagger'], (cb) => {
     let started = false;
     const options = {
         script: 'app.js',
@@ -26,7 +26,7 @@ gulp.task('serve', ['swagger', 'lint'], (cb) => {
             PORT: 5000
         },
         watch: [jsFiles, swaggerFiles],
-        tasks: ['swagger', 'lint']
+        tasks: ['swagger']
     };
     return nodemon(options)
         .on('start', () => {

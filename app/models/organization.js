@@ -12,11 +12,15 @@ const OrganizationSchema = Schema({
     name: String
 }, { versionKey: false });
 
-OrganizationSchema.set('toObject', { getters: true });
+OrganizationSchema.set('toObject', { getters: true, virtuals: true });
 
-OrganizationSchema.virtual('url').get(() => `/organizations/${this.id}`);
+OrganizationSchema.virtual('url').get(function() {
+  return `/organizations/${this._id}`;
+});
 
-OrganizationSchema.virtual('offices_url').get(`/organizations/${this.id}/offices`);
+OrganizationSchema.virtual('offices_url').get(function() {
+  return `/organizations/${this._id}/offices`;
+});
 
 OrganizationSchema.plugin(autoIncrement.plugin, {
     model: 'organizations',

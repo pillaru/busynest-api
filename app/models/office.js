@@ -18,10 +18,11 @@ const OfficeSchema = Schema({
     organization: { type: Number, ref: 'organizations' }
 }, { versionKey: false });
 
-OfficeSchema.set('toObject', { getters: true });
+OfficeSchema.set('toObject', { getters: true, virtuals: true });
 
-OfficeSchema.virtual('url').get(() =>
-    `/organizations/${this.organization._id}/offices/${this._id}`);
+OfficeSchema.virtual('url').get(function() {
+  return `/organizations/${this.organization._id}/offices/${this._id}`;
+});
 
 OfficeSchema.plugin(autoIncrement.plugin, {
     model: 'offices',
