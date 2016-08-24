@@ -24,11 +24,13 @@ db.once('open', () => {
 // routes
 const timesheetEntries = require('./app/routes/timesheets-entries');
 const employers = require('./app/routes/organizations');
+const offices = require('./app/routes/offices.route');
 
 app.use(cors());
 
 app.use('/timesheet-entries', timesheetEntries);
 app.use('/organizations', employers);
+app.use('/offices', offices);
 
 const port = process.env.PORT || 5000;
 

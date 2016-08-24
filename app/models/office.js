@@ -21,7 +21,7 @@ const OfficeSchema = Schema({
 OfficeSchema.set('toObject', { getters: true, virtuals: true });
 
 OfficeSchema.virtual('url').get(function() {
-  return `/organizations/${this.organization._id}/offices/${this._id}`;
+  return `/offices/${this._id}`;
 });
 
 OfficeSchema.plugin(autoIncrement.plugin, {

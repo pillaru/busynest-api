@@ -51,8 +51,8 @@ router.get('/:id/offices', (req, res) => {
 });
 
 router.post('/:id/offices', (req, res) => {
-    req.checkBody('address_line_1', 'Address Line 1 is required').notEmpty();
-    req.checkBody('town_or_city', 'Town or City is required').notEmpty();
+    req.checkBody('addressLine1', 'Address Line 1 is required').notEmpty();
+    req.checkBody('townOrCity', 'Town or City is required').notEmpty();
     req.checkBody('country', 'Country is required').notEmpty();
     req.checkBody('postcode', 'Postcode is required').notEmpty();
 
@@ -62,25 +62,18 @@ router.post('/:id/offices', (req, res) => {
         return;
     }
 
-    officeService.create(req.params.id, {
-        address_line_1: req.body.address_line_1,
-        address_line_2: req.body.address_line_2,
-        town_or_city: req.body.town_or_city,
+    officeService.create({
+        addressLine1: req.body.addressLine1,
+        addressLine2: req.body.addressLine2,
+        townOrCity: req.body.townOrCity,
         county: req.body.county,
         country: req.body.country,
-        postcode: req.body.postcode
+        postcode: req.body.postcode,
+        organization: {
+            id: req.params.id
+        }
     }, req).then((office) => {
         res.status(201).json(office);
-    }).catch((reason) => {
-        console.log(reason);
-        res.sendStatus(500);
-    });
-});
-
-// organizations/{id}/offices/{id}
-router.get('/:id/offices/:oid', (req, res) => {
-    officeService.findById(req.params.oid, req).then((office) => {
-        res.send(office);
     }).catch((reason) => {
         console.log(reason);
         res.sendStatus(500);

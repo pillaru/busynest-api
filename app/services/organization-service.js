@@ -5,7 +5,7 @@ function transformModel(doc, req) {
     const urlBase = `${req.protocol}://${req.get('host')}`;
     const transformed = doc.toObject();
     transformed.url = urlBase + transformed.url;
-    transformed.offices_url = urlBase + transformed.offices_url;
+    transformed.officesUrl = urlBase + transformed.officesUrl;
     delete transformed._id;
     return transformed;
 }

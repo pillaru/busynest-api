@@ -6,9 +6,24 @@ function transformModel(doc, req) {
     const transformed = doc.toObject();
     transformed.url = urlBase + transformed.url;
     delete transformed._id;
-    delete transformed.organization._id;
-    transformed.organization.url = urlBase + transformed.organization.url;
+    if(transformed.organization) {
+        delete transformed.organization._id;
+        transformed.organization.url = urlBase + transformed.organization.url;
+        transformed.organization.officesUrl = urlBase + transformed.organization.officesUrl;
+    }
     return transformed;
+}
+
+function find(req) {
+    const deferred = Q.defer();
+
+    const query = Office.find({}).populate('organization');
+
+    query.exec().then((results) => {
+        const offices = results.map((office) => transformModel(office, req));
+        deferred.resolve(offices);
+    }).end((reason) => deferred.reject(reason));
+    return deferred.promise;
 }
 
 function findByOrganization(orgId, req) {
@@ -35,17 +50,17 @@ function findById(id, req) {
     return deferred.promise;
 }
 
-function create(orgId, newOffice, req) {
+function create(newOffice, req) {
     const deferred = Q.defer();
 
     const office = new Office({
-        address_line_1: newOffice.address_line_1,
-        address_line_2: newOffice.address_line_2,
-        town_or_city: newOffice.town_or_city,
+        addressLine1: newOffice.addressLine1,
+        addressLine2: newOffice.addressLine2,
+        townOrCity: newOffice.townOrCity,
         county: newOffice.county,
         country: newOffice.country,
         postcode: newOffice.postcode,
-        organization: orgId
+        organization: newOffice.organization.id
     });
 
     office.save().then((result) => findById(result._id, req)).then((result) => {
@@ -55,8 +70,20 @@ function create(orgId, newOffice, req) {
     return deferred.promise;
 }
 
+function remove(id, req) {
+    const deferred = Q.defer();
+
+    Office.findById(id).remove().exec().then(() => {
+        deferred.resolve();
+    }).end(deferred.rejec);
+
+    return deferred.promise;
+}
+
 module.exports = {
+    find,
     findById,
     findByOrganization,
-    create
+    create,
+    remove
 };
