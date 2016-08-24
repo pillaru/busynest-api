@@ -6,16 +6,16 @@ function transformModel(doc, req) {
     const transformed = doc.toObject();
     transformed.url = urlBase + transformed.url;
     delete transformed._id;
-    if (transformed.employer_office) {
-        transformed.employer_office.url = urlBase + transformed.employer_office.url;
-        delete transformed.employer_office._id;
+    if (transformed.employerOffice) {
+        transformed.employerOffice.url = urlBase + transformed.employerOffice.url;
+        delete transformed.employerOffice._id;
     }
-    if (transformed.employer_office && transformed.employer_office.organization) {
-        transformed.employer_office.organization.url = urlBase +
-            transformed.employer_office.organization.url;
-        transformed.employer_office.organization.offices_url = urlBase +
-            transformed.employer_office.organization.offices_url;
-        delete transformed.employer_office.organization._id;
+    if (transformed.employerOffice && transformed.employerOffice.organization) {
+        transformed.employerOffice.organization.url = urlBase +
+            transformed.employerOffice.organization.url;
+        transformed.employerOffice.organization.officesUrl = urlBase +
+            transformed.employerOffice.organization.officesUrl;
+        delete transformed.employerOffice.organization._id;
     }
     return transformed;
 }
@@ -24,7 +24,7 @@ function find(req) {
     const deferred = Q.defer();
 
     const query = TimesheetEntry.find({}).populate({
-        path: 'employer_office',
+        path: 'employerOffice',
         populate: { path: 'organization' }
     });
 
@@ -42,7 +42,7 @@ function findById(id, req) {
     const deferred = Q.defer();
 
     const query = TimesheetEntry.findById(id).populate({
-        path: 'employer_office',
+        path: 'employerOffice',
         populate: { path: 'organization' }
     });
 
@@ -57,11 +57,11 @@ function create(newEntry, req) {
     const deferred = Q.defer();
 
     const entry = new TimesheetEntry({
-        employer_office: newEntry.employer_office.id,
+        employerOffice: newEntry.employerOffice.id,
         start: newEntry.start,
         end: newEntry.end,
         break: newEntry.break,
-        rate_per_hour: newEntry.rate_per_hour
+        ratePerHour: newEntry.ratePerHour
     });
 
     entry.save().then((result) => findById(result.id, req))
@@ -72,8 +72,19 @@ function create(newEntry, req) {
     return deferred.promise;
 }
 
+function remove(id, req) {
+    const deferred = Q.defer();
+
+    TimesheetEntry.findById(id).remove().exec().then(() => {
+        deferred.resolve();
+    }).end(deferred.rejec);
+
+    return deferred.promise;
+}
+
 module.exports = {
     find,
     findById,
-    create
+    create,
+    remove
 };

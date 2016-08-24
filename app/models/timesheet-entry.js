@@ -12,8 +12,8 @@ const TimesheetEntrySchema = Schema({
     start: Date,
     end: Date,
     break: Number,
-    rate_per_hour: Number,
-    employer_office: { type: Number, ref: 'offices' }
+    ratePerHour: Number,
+    employerOffice: { type: Number, ref: 'offices' }
 }, { versionKey: false });
 
 

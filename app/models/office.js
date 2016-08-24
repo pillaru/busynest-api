@@ -9,9 +9,9 @@ const connection = mongoose.createConnection(connectionString);
 autoIncrement.initialize(connection);
 
 const OfficeSchema = Schema({
-    address_line_1: String,
-    address_line_2: String,
-    town_or_city: String,
+    addressLine1: String,
+    addressLine2: String,
+    townOrCity: String,
     county: String,
     country: String,
     postcode: String,
