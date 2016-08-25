@@ -14,14 +14,6 @@ const OrganizationSchema = Schema({
 
 OrganizationSchema.set('toObject', { getters: true, virtuals: true });
 
-OrganizationSchema.virtual('url').get(function() {
-  return `/organizations/${this._id}`;
-});
-
-OrganizationSchema.virtual('offices.url').get(function() {
-  return `/organizations/${this._id}/offices`;
-});
-
 OrganizationSchema.plugin(autoIncrement.plugin, {
     model: 'organizations',
     startAt: 1

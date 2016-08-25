@@ -20,10 +20,6 @@ const OfficeSchema = Schema({
 
 OfficeSchema.set('toObject', { getters: true, virtuals: true });
 
-OfficeSchema.virtual('url').get(function() {
-  return `/offices/${this._id}`;
-});
-
 OfficeSchema.plugin(autoIncrement.plugin, {
     model: 'offices',
     startAt: 1

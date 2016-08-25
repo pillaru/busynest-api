@@ -2,7 +2,7 @@ var officeFactory = require('./office.factory'),
     orgFactory = require('./organization.factory');
 
 function create(entry, urlBase) {
-    entry.url = urlBase + entry.url;
+    entry.url = urlBase + '/timesheet-entries/'+entry.id;
     delete entry._id;
     if (entry.employerOffice) {
         entry.employerOffice = officeFactory.create(entry.employerOffice, urlBase);

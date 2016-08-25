@@ -24,8 +24,4 @@ TimesheetEntrySchema.plugin(autoIncrement.plugin, {
 
 TimesheetEntrySchema.set('toObject', { getters: true, virtuals: true });
 
-TimesheetEntrySchema.virtual('url').get(function() {
-  return `/timesheet-entries/${this._id}`;
-});
-
 module.exports = mongoose.model('timesheet-entries', TimesheetEntrySchema);

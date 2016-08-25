@@ -1,7 +1,7 @@
 function create(organization, urlBase) {
-    organization.url = urlBase + organization.url;
+    organization.url = urlBase + '/organizations/'+organization.id;
     organization.offices = {
-        url: urlBase + organization.offices.url
+        url: urlBase + '/organizations/'+organization.id+'/offices'
     }
     delete organization._id;
     return organization;
