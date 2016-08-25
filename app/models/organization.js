@@ -18,7 +18,7 @@ OrganizationSchema.virtual('url').get(function() {
   return `/organizations/${this._id}`;
 });
 
-OrganizationSchema.virtual('officesUrl').get(function() {
+OrganizationSchema.virtual('offices.url').get(function() {
   return `/organizations/${this._id}/offices`;
 });
 
