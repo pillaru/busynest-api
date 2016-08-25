@@ -1,10 +1,10 @@
-function create(model, urlBase) {
-    model.url = urlBase + model.url;
-    model.offices = {
-        url: urlBase + model.offices.url
+function create(organization, urlBase) {
+    organization.url = urlBase + organization.url;
+    organization.offices = {
+        url: urlBase + organization.offices.url
     }
-    delete model._id;
-    return model;
+    delete organization._id;
+    return organization;
 }
 
 module.exports = {

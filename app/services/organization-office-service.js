@@ -1,50 +1,41 @@
-const Office = require('./../models/office');
-const Q = require('q');
-
-function transformModel(doc, req) {
-    const urlBase = `${req.protocol}://${req.get('host')}`;
-    const transformed = doc.toObject();
-    transformed.url = urlBase + transformed.url;
-    delete transformed._id;
-    if(transformed.organization) {
-        delete transformed.organization._id;
-        transformed.organization.url = urlBase + transformed.organization.url;
-        transformed.organization.officesUrl = urlBase + transformed.organization.officesUrl;
-    }
-    return transformed;
-}
+var Office = require('./../models/office'),
+    Q = require('q'),
+    officeFactory = require('./../factories/office.factory');
 
 function find(req) {
     const deferred = Q.defer();
+    const urlBase = `${req.protocol}://${req.get('host')}`;
 
     const query = Office.find({}).populate('organization');
 
     query.exec().then((results) => {
-        const offices = results.map((office) => transformModel(office, req));
-        deferred.resolve(offices);
+        deferred.resolve(results.map((office) =>
+            officeFactory.create(office.toObject(), urlBase)));
     }).end((reason) => deferred.reject(reason));
     return deferred.promise;
 }
 
 function findByOrganization(orgId, req) {
     const deferred = Q.defer();
+    const urlBase = `${req.protocol}://${req.get('host')}`;
 
     const query = Office.find({ organization: orgId }).populate('organization');
 
     query.exec().then((results) => {
-        const offices = results.map((office) => transformModel(office, req));
-        deferred.resolve(offices);
+        deferred.resolve(results.map((office) =>
+            officeFactory.create(office.toObject(), urlBase)));
     }).end((reason) => deferred.reject(reason));
     return deferred.promise;
 }
 
 function findById(id, req) {
     const deferred = Q.defer();
+    const urlBase = `${req.protocol}://${req.get('host')}`;
 
     const query = Office.findById(id).populate('organization');
 
     query.exec().then((doc) => {
-        deferred.resolve(transformModel(doc, req));
+        deferred.resolve(officeFactory.create(doc.toObject(), urlBase));
     }).end(deferred.reject);
 
     return deferred.promise;
@@ -52,6 +43,7 @@ function findById(id, req) {
 
 function create(newOffice, req) {
     const deferred = Q.defer();
+    const urlBase = `${req.protocol}://${req.get('host')}`;
 
     const office = new Office({
         addressLine1: newOffice.addressLine1,
