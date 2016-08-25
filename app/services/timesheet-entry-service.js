@@ -1,27 +1,10 @@
-const Q = require('q');
-const TimesheetEntry = require('./../models/timesheet-entry');
-
-function transformModel(doc, req) {
-    const urlBase = `${req.protocol}://${req.get('host')}`;
-    const transformed = doc.toObject();
-    transformed.url = urlBase + transformed.url;
-    delete transformed._id;
-    if (transformed.employerOffice) {
-        transformed.employerOffice.url = urlBase + transformed.employerOffice.url;
-        delete transformed.employerOffice._id;
-    }
-    if (transformed.employerOffice && transformed.employerOffice.organization) {
-        transformed.employerOffice.organization.url = urlBase +
-            transformed.employerOffice.organization.url;
-        transformed.employerOffice.organization.officesUrl = urlBase +
-            transformed.employerOffice.organization.officesUrl;
-        delete transformed.employerOffice.organization._id;
-    }
-    return transformed;
-}
+var Q = require('q'),
+    TimesheetEntry = require('./../models/timesheet-entry'),
+    timesheetEntryFactory = require('./../factories/timesheet-entry.factory');
 
 function find(req) {
     const deferred = Q.defer();
+    const urlBase = `${req.protocol}://${req.get('host')}`;
 
     const query = TimesheetEntry.find({}).populate({
         path: 'employerOffice',
@@ -29,8 +12,8 @@ function find(req) {
     });
 
     query.exec().then((results) => {
-        const entries = results.map((entry) => transformModel(entry, req));
-        deferred.resolve(entries);
+        deferred.resolve(results.map((entry) =>
+            timesheetEntryFactory.create(entry.toObject(), urlBase)));
     }).end((reason) => {
         deferred.reject(reason);
     });
@@ -40,6 +23,7 @@ function find(req) {
 
 function findById(id, req) {
     const deferred = Q.defer();
+    const urlBase = `${req.protocol}://${req.get('host')}`;
 
     const query = TimesheetEntry.findById(id).populate({
         path: 'employerOffice',
@@ -47,7 +31,7 @@ function findById(id, req) {
     });
 
     query.exec().then((doc) => {
-        deferred.resolve(transformModel(doc, req));
+        deferred.resolve(timesheetEntryFactory.create(doc.toObject(), urlBase));
     }).end(deferred.reject);
 
     return deferred.promise;
@@ -55,6 +39,7 @@ function findById(id, req) {
 
 function create(newEntry, req) {
     const deferred = Q.defer();
+    const urlBase = `${req.protocol}://${req.get('host')}`;
 
     const entry = new TimesheetEntry({
         employerOffice: newEntry.employerOffice.id,
