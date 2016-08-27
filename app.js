@@ -3,6 +3,7 @@ const expressValidator = require('express-validator');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+var config = require('./config');
 
 const app = express();
 
@@ -10,9 +11,7 @@ app.use(express.static('public'));
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(expressValidator()); // this line must be immediately after bodyParser.json()!
 
-const connectionString = 'mongodb://localhost:27017/bizhub';
-
-mongoose.connect(connectionString);
+mongoose.connect(config.mongodb.connectionString);
 
 const db = mongoose.connection;
 

@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
 const autoIncrement = require('mongoose-auto-increment');
+var config = require('./../../config');
 
 const Schema = mongoose.Schema;
 
-const connectionString = 'mongodb://localhost:27017/bizhub';
-const connection = mongoose.createConnection(connectionString);
+const connection = mongoose.createConnection(config.mongodb.connectionString);
 
 autoIncrement.initialize(connection);
 

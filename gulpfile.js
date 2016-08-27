@@ -23,7 +23,8 @@ gulp.task('serve', ['swagger'], (cb) => {
         script: 'app.js',
         delayTime: 1,
         env: {
-            PORT: 5000
+            PORT: 5000,
+            MONGODB_CONNECTION_STRING: 'mongodb://localhost:27017/bizhub'
         },
         watch: [jsFiles, swaggerFiles],
         tasks: ['swagger']
