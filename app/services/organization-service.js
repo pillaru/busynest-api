@@ -9,8 +9,8 @@ function find(req) {
     const query = Organization.find({});
 
     query.exec().then((results) => {
-        const organizations = results.map((doc) =>
-            deferred.resolve(organizationFactory.create(doc.toObject(), urlBase)));
+        deferred.resolve(results.map((doc) =>
+            organizationFactory.create(doc.toObject(), urlBase)));
     }).end((reason) => {
         deferred.reject(reason);
     });
