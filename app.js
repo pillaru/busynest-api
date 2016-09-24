@@ -9,13 +9,14 @@ var stormpath = require('express-stormpath');
 const app = express();
 
 app.use(express.static('public'));
-app.use(bodyParser.json()); // support json encoded bodies
-app.use(expressValidator()); // this line must be immediately after bodyParser.json()!
 app.use(stormpath.init(app, {
     web: {
         produces: ['application/json']
     }
-}))
+}));
+
+app.use(bodyParser.json()); // support json encoded bodies
+app.use(expressValidator()); // this line must be immediately after bodyParser.json()!
 
 mongoose.connect(config.mongodb.connectionString);
 
