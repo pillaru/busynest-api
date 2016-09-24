@@ -8,6 +8,8 @@ var stormpath = require('express-stormpath');
 
 const app = express();
 
+app.use(cors());
+
 app.use(express.static('public'));
 app.use(stormpath.init(app, {
     web: {
@@ -31,8 +33,6 @@ db.once('open', () => {
 const timesheetEntries = require('./app/routes/timesheets-entries');
 const employers = require('./app/routes/organizations');
 const offices = require('./app/routes/offices.route');
-
-app.use(cors());
 
 app.use('/timesheet-entries', stormpath.apiAuthenticationRequired, timesheetEntries);
 app.use('/organizations', employers);
