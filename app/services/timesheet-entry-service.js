@@ -6,7 +6,9 @@ function find(req) {
     const deferred = Q.defer();
     const urlBase = `${req.protocol}://${req.get('host')}`;
 
-    const query = TimesheetEntry.find({}).populate({
+    var userId = req.user.href.substr(req.user.href.lastIndexOf('/') + 1);
+
+    const query = TimesheetEntry.find({"userId": userId}).populate({
         path: 'employerOffice',
         populate: { path: 'organization' }
     });
@@ -31,6 +33,9 @@ function findById(id, req) {
     });
 
     query.exec().then((doc) => {
+        if(doc == null) {
+            deferred.resolve(null);
+        }
         deferred.resolve(timesheetEntryFactory.create(doc.toObject(), urlBase));
     }).end(deferred.reject);
 
@@ -43,6 +48,7 @@ function create(newEntry, req) {
 
     const entry = new TimesheetEntry({
         employerOffice: newEntry.employerOffice.id,
+        userId: newEntry.userId,
         start: newEntry.start,
         end: newEntry.end,
         break: newEntry.break,

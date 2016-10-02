@@ -20,6 +20,7 @@
     "body-parser": "^1.15.2",
     "cors": "^2.7.1",
     "express": "^4.13.4",
+    "express-stormpath": "^3.1.5",
     "express-validator": "^2.20.8",
     "mongodb": "^2.2.5",
     "mongoose": "^4.5.8",
