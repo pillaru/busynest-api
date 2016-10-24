@@ -4,8 +4,9 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "env-cmd .env node app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "env-cmd .env nodemon --exec npm run swagger",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "swagger": "echo \"Error: copy over swagger.yml\""
   },
   "repository": {
     "type": "git",
@@ -38,6 +39,7 @@
     "eslint-plugin-react": "^6.1.0",
     "gulp": "^3.9.1",
     "gulp-eslint": "^3.0.1",
-    "gulp-nodemon": "^2.1.0"
+    "gulp-nodemon": "^2.1.0",
+    "nodemon": "^1.11.0"
   }
 }
