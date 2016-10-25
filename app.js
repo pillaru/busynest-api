@@ -6,10 +6,11 @@ const cors = require('cors');
 var config = require('./config');
 var stormpath = require('express-stormpath');
 var morgan = require('morgan');
+var logger = require('./logger/loggerFactory');
 
 const app = express();
 
-app.use(morgan('dev'));
+app.use(morgan('dev', {"stream": logger.stream}));
 
 app.use(cors());
 
@@ -29,7 +30,7 @@ const db = mongoose.connection;
 
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 db.once('open', () => {
-    console.log('connected to MongoDB');
+    logger.info('connected to MongoDB');
 });
 
 // routes
@@ -44,5 +45,5 @@ app.use('/offices', offices);
 const port = process.env.PORT || 5000;
 
 app.listen(port, () => {
-    console.log(`Example app listening on port ${port}!`);
+    logger.info(`app listening on port ${port}!`);
 });

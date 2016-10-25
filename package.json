@@ -30,7 +30,8 @@
     "mongoose-auto-increment": "^5.0.1",
     "morgan": "^1.7.0",
     "promise": "^7.1.1",
-    "q": "^1.4.1"
+    "q": "^1.4.1",
+    "winston": "^2.2.0"
   },
   "devDependencies": {
     "env-cmd": "^2.2.0",
