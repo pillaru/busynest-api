@@ -4,9 +4,10 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "env-cmd .env nodemon --exec npm run build:swagger",
+    "start": "npm run build && env-cmd .env node app.js",
+    "watch": "nodemon --exec npm run start",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:swagger": "cp ./api/swagger/swagger.yaml ./public"
+    "build": "cp ./api/swagger/swagger.yaml ./public"
   },
   "repository": {
     "type": "git",
@@ -27,6 +28,7 @@
     "mongodb": "^2.2.5",
     "mongoose": "^4.5.8",
     "mongoose-auto-increment": "^5.0.1",
+    "morgan": "^1.7.0",
     "promise": "^7.1.1",
     "q": "^1.4.1"
   },

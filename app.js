@@ -5,8 +5,11 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 var config = require('./config');
 var stormpath = require('express-stormpath');
+var morgan = require('morgan');
 
 const app = express();
+
+app.use(morgan('combined'));
 
 app.use(cors());
 
@@ -40,8 +43,6 @@ app.use('/offices', offices);
 
 const port = process.env.PORT || 5000;
 
-app.on('stormpath.ready', function () {
-    app.listen(port, () => {
-        console.log(`Example app listening on port ${port}!`);
-    });
+app.listen(port, () => {
+    console.log(`Example app listening on port ${port}!`);
 });
