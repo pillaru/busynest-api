@@ -4,9 +4,9 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "env-cmd .env nodemon --exec npm run swagger",
+    "start": "env-cmd .env nodemon --exec npm run build:swagger",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "swagger": "echo \"Error: copy over swagger.yml\""
+    "build:swagger": "cp ./api/swagger/swagger.yaml ./public"
   },
   "repository": {
     "type": "git",
