@@ -24,6 +24,7 @@ app.use(stormpath.init(app, {
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(expressValidator()); // this line must be immediately after bodyParser.json()!
 
+mongoose.set('debug', true);
 mongoose.connect(config.mongodb.connectionString);
 
 const db = mongoose.connection;
