@@ -3,21 +3,19 @@ const expressValidator = require('express-validator');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-var config = require('./config');
-var stormpath = require('express-stormpath');
-var morgan = require('morgan');
-var logger = require('./logger/loggerFactory');
+const config = require('./config');
+const stormpath = require('express-stormpath');
+const loggerMiddleware = require('./src/middlewares/logger');
+const logger = require('./logger/loggerFactory');
 
 const app = express();
 
-app.use(morgan('dev', {"stream": logger.stream}));
-
+app.use(loggerMiddleware);
 app.use(cors());
-
 app.use(express.static('public'));
 app.use(stormpath.init(app, {
     debug: 'info',
-    logger: logger,
+    logger,
     web: {
         produces: ['application/json']
     }
@@ -37,11 +35,11 @@ db.once('open', () => {
 });
 
 // routes
-const timesheetEntries = require('./app/routes/timesheets-entries');
+const timesheetEntries = require('./src/middlewares/timesheetEntries');
 const employers = require('./app/routes/organizations');
 const offices = require('./app/routes/offices.route');
 
-app.use('/timesheet-entries', stormpath.apiAuthenticationRequired, timesheetEntries);
+app.use(timesheetEntries);
 app.use('/organizations', employers);
 app.use('/offices', offices);
 
@@ -51,6 +49,6 @@ app.listen(port, () => {
     logger.info(`app listening on port ${port}!`);
 });
 
-app.on('stormpath.ready', function () {
-  logger.info('Stormpath Ready!');
+app.on('stormpath.ready', () => {
+    logger.info('Stormpath Ready!');
 });
