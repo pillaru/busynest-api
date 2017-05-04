@@ -7,6 +7,8 @@ STORMPATH_CLIENT_APIKEY_SECRET=client_apikey_secret
 STORMPATH_APPLICATION_HREF=stormpath_application_href
 ```
 
+Make sure mongo db is running on localhost.
+
 ```
-gulp
+npm start
 ```
