@@ -2,8 +2,8 @@ var Organization = require('./../models/organization'),
     Q = require('q'),
     organizationFactory = require('./../factories/organization.factory');
 
-function find(req) {
-    const urlBase = `${req.protocol}://${req.get('host')}`;
+function find() {
+    const urlBase = 'https://api.bizhub.io';
     const deferred = Q.defer();
 
     const query = Organization.find({});
