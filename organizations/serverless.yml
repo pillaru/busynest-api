@@ -15,10 +15,6 @@ service: organizations
 
 package:
   include:
-    - ../config.js
-    - ../app/services/organization-service.js
-    - ../app/models/organization.js
-    - ../app/factories/organization.factory.js
     - ../node_modules/async/**
     - ../node_modules/bson/**
     - ../node_modules/extend/**
@@ -88,10 +84,19 @@ provider:
 functions:
   getOrgs:
     handler: handler.get
+    timeout: 6
     events:
       - http:
           path: organizations
           method: get
+
+  postOrg:
+    handler: handler.create
+    timeout: 6
+    events:
+      - http:
+          path: organizations
+          method: post
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
@@ -133,3 +138,5 @@ functions:
 #     NewOutput:
 #       Description: "Description for the output"
 #       Value: "Some output value"
+plugins:
+  - serverless-offline

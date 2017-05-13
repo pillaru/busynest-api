@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
 const autoIncrement = require('mongoose-auto-increment');
-var config = require('./../../config');
+const config = require('./../../config');
+
+// Use native promises
+mongoose.Promise = global.Promise;
 
 const Schema = mongoose.Schema;
 
@@ -14,7 +17,7 @@ const TimesheetEntrySchema = Schema({
     break: Number,
     ratePerHour: Number,
     employerOffice: { type: Number, ref: 'offices' },
-    userId: String,
+    userId: String
 }, { versionKey: false });
 
 

@@ -1,46 +1,47 @@
-var Organization = require('./../models/organization'),
-    Q = require('q'),
-    organizationFactory = require('./../factories/organization.factory');
+const Organization = require('./../models/organization');
+const organizationFactory = require('./../factories/organization.factory');
 
 function find() {
-    const urlBase = 'https://api.bizhub.io';
-    const deferred = Q.defer();
+    function resolver(resolve, reject) {
+        const urlBase = 'https://api.bizhub.io';
 
-    const query = Organization.find({});
+        const query = Organization.find({});
 
-    query.exec().then((results) => {
-        deferred.resolve(results.map((doc) =>
-            organizationFactory.create(doc.toObject(), urlBase)));
-    }).end((reason) => {
-        deferred.reject(reason);
-    });
-    return deferred.promise;
+        const promise = query.exec();
+
+        promise.then((results) => {
+            console.log('was here inside execute');
+            resolve(results.map((doc) =>
+                organizationFactory.create(doc.toObject(), urlBase)));
+        }).catch(reject);
+    }
+    return new Promise(resolver);
 }
 
 function findById(id, req) {
-    const deferred = Q.defer();
-    const urlBase = `${req.protocol}://${req.get('host')}`;
+    function resolver(resolve, reject) {
+        const urlBase = `${req.protocol}://${req.get('host')}`;
 
-    const query = Organization.findById(id);
+        const query = Organization.findById(id);
 
-    query.exec().then((doc) => {
-        deferred.resolve(organizationFactory.create(doc.toObject(), urlBase));
-    }).end(deferred.reject);
-
-    return deferred.promise;
+        query.exec().then((doc) => {
+            resolve(organizationFactory.create(doc.toObject(), urlBase));
+        }).catch(reject);
+    }
+    return new Promise(resolver);
 }
 
 function create(newOrganization, req) {
-    const deferred = Q.defer();
-    const urlBase = `${req.protocol}://${req.get('host')}`;
+    function resolver(resolve, reject) {
+        const urlBase = `${req.protocol}://${req.get('host')}`;
 
-    const organization = new Organization({ name: newOrganization.name });
+        const organization = new Organization({ name: newOrganization.name });
 
-    organization.save().then((doc) => {
-        deferred.resolve(organizationFactory.create(doc.toObject(), urlBase));
-    }).end(deferred.reject);
-
-    return deferred.promise;
+        organization.save().then((doc) => {
+            resolve(organizationFactory.create(doc.toObject(), urlBase));
+        }).catch(reject);
+    }
+    return new Promise(resolver);
 }
 
 module.exports = {
