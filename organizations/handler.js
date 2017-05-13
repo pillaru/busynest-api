@@ -1,4 +1,7 @@
 const MongoClient = require('mongodb').MongoClient;
+const Ajv = require('ajv');
+const organizationSchema = require('./organization-schema.json');
+const queryStringSchema = require('./querystring-schema.json');
 const helper = require('./helper');
 // const Logger = require('mongodb').Logger;
 
@@ -7,14 +10,13 @@ const helper = require('./helper');
 
 let cachedDb = null;
 
-function badRequest(context, actual, message) {
+function badRequest(context, errors) {
     return {
         statusCode: 400,
         body: JSON.stringify({
-            errorType: 'BadRequest',
+            message: 'Validation failed',
             requestId: context.awsRequestId,
-            actual,
-            message
+            errors
         })
     };
 }
@@ -29,19 +31,18 @@ module.exports.get = (event, context, callback) => {
     context.callbackWaitsForEmptyEventLoop = false;
 
     const qs = event.queryStringParameters || { };
-    qs.limit = Number(qs.limit || 10);
-    if (qs.limit > 100) {
-        const message = 'limit cannot be higher than 100';
-        return callback(null, badRequest(context, qs.limit, message));
-    }
-    if (qs.limit < 0) {
-        const message = 'limit cannot be less than 0';
-        return callback(null, badRequest(context, qs.limit, message));
-    }
-    qs.offset = Number(qs.offset || 0);
-    if (qs.offset < 0) {
-        const message = 'offset cannot be less than 0';
-        return callback(null, badRequest(context, qs.offset, message));
+    qs.limit = Number(qs.limit) || 0;
+    qs.offset = Number(qs.offset) || 0;
+
+    const ajv = new Ajv();
+    ajv.validate(queryStringSchema, qs);
+    if (ajv.errors && ajv.errors.length > 0) {
+        console.log(ajv.errors);
+        const errors = ajv.errors.map((error) => ({
+            message: error.message,
+            path: error.dataPath
+        }));
+        return callback(null, badRequest(context, errors));
     }
 
     try {
@@ -70,6 +71,18 @@ module.exports.create = (event, context, callback) => {
 
     const jsonContents = JSON.parse(event.body);
 
+    const ajv = new Ajv({ allErrors: true, removeAdditional: true });
+    ajv.validate(organizationSchema, jsonContents);
+    if (ajv.errors && ajv.errors.length > 0) {
+        console.log(ajv.errors);
+        const errors = ajv.errors.map((error) => ({
+            message: error.message,
+            path: error.dataPath,
+            params: error.params
+        }));
+        return callback(null, badRequest(context, errors));
+    }
+
     try {
         if (cachedDb === null) {
             console.log('=> connecting to database');
@@ -82,7 +95,7 @@ module.exports.create = (event, context, callback) => {
                 return helper.createDoc(db, jsonContents, callback);
             });
         } else {
-            helper.createDoc(cachedDb, jsonContents, callback);
+            return helper.createDoc(cachedDb, jsonContents, callback);
         }
     } catch (err) {
         console.error('an error occurred', err);

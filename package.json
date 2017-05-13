@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/chekkan/bizhub-api#readme",
   "dependencies": {
+    "ajv": "^5.0.1",
     "body-parser": "^1.15.2",
     "cors": "^2.7.1",
     "express": "^4.13.4",

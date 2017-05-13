@@ -1,4 +1,4 @@
-function getAll(limit = 10, offset = 0, db, callback) {
+function getAll(limit, offset, db, callback) {
     db.collection('organizations')
         .find({})
         .limit(limit)
@@ -18,7 +18,7 @@ function getAll(limit = 10, offset = 0, db, callback) {
 
 function createDoc(db, json, callback) {
     try {
-        console.log(json);
+        // console.log(json);
         const result = db.collection('organizations').insertOne(json);
         console.log(result);
         console.log(`created an entry into the organizations collection with id: 

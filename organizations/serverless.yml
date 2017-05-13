@@ -18,6 +18,7 @@ package:
     - ./helper.js
     - ../node_modules/async/**
     - ../node_modules/bson/**
+    - ../node_modules/co/**
     - ../node_modules/extend/**
     - ../node_modules/kareem/**
     - ../node_modules/hooks-fixed/**
@@ -36,6 +37,8 @@ package:
     - ../node_modules/semver/**
     - ../node_modules/sliced/**
     - ../node_modules/q/**
+    - ../node_modules/ajv/**
+    - ../node_modules/json-stable-stringify/**
 
 # You can pin your service to only deploy with a specific Serverless version
 # Check out our docs for more details
