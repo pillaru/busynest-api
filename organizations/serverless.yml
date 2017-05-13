@@ -15,6 +15,7 @@ service: organizations
 
 package:
   include:
+    - ./helper.js
     - ../node_modules/async/**
     - ../node_modules/bson/**
     - ../node_modules/extend/**

@@ -1,4 +1,5 @@
 const MongoClient = require('mongodb').MongoClient;
+const helper = require('./helper');
 // const Logger = require('mongodb').Logger;
 
 // Set debug level
@@ -6,21 +7,16 @@ const MongoClient = require('mongodb').MongoClient;
 
 let cachedDb = null;
 
-function getAll(db, callback) {
-    db.collection('organizations')
-        .find({})
-        .limit(10)
-        .toArray((err, docs) => {
-            if (err) {
-                console.error('an error occurred in getAll', err);
-                callback(null, JSON.stringify(err));
-            } else {
-                callback(null, {
-                    statusCode: 200,
-                    body: JSON.stringify(docs)
-                });
-            }
-        });
+function badRequest(context, actual, message) {
+    return {
+        statusCode: 400,
+        body: JSON.stringify({
+            errorType: 'BadRequest',
+            requestId: context.awsRequestId,
+            actual,
+            message
+        })
+    };
 }
 
 module.exports.get = (event, context, callback) => {
@@ -32,6 +28,22 @@ module.exports.get = (event, context, callback) => {
     // only take a few hundred milliseconds.
     context.callbackWaitsForEmptyEventLoop = false;
 
+    const qs = event.queryStringParameters || { };
+    qs.limit = Number(qs.limit || 10);
+    if (qs.limit > 100) {
+        const message = 'limit cannot be higher than 100';
+        return callback(null, badRequest(context, qs.limit, message));
+    }
+    if (qs.limit < 0) {
+        const message = 'limit cannot be less than 0';
+        return callback(null, badRequest(context, qs.limit, message));
+    }
+    qs.offset = Number(qs.offset || 0);
+    if (qs.offset < 0) {
+        const message = 'offset cannot be less than 0';
+        return callback(null, badRequest(context, qs.offset, message));
+    }
+
     try {
         if (cachedDb === null) {
             console.log('=> connecting to database');
@@ -41,29 +53,15 @@ module.exports.get = (event, context, callback) => {
                     return callback(err, '[500] Internal Server Error');
                 }
                 cachedDb = db;
-                return getAll(db, callback);
+                return helper.getAll(qs.limit, qs.offset, db, callback);
             });
         } else {
-            getAll(cachedDb, callback);
+            helper.getAll(qs.limit, qs.offset, cachedDb, callback);
         }
     } catch (err) {
         console.error('an error occurred', err);
     }
 };
-
-function createDoc(db, json, callback) {
-    try {
-        console.log(json);
-        const result = db.collection('organizations').insertOne(json);
-        console.log(result);
-        console.log(`created an entry into the organizations collection with id: 
-                ${result.insertedId}`);
-        callback(null, { statusCode: 201 });
-    } catch (err) {
-        console.error('an error occurred in createDoc', err);
-        callback(null, JSON.stringify(err));
-    }
-}
 
 module.exports.create = (event, context, callback) => {
     const uri = process.env.MONGODB_CONNECTION_STRING;
@@ -81,10 +79,10 @@ module.exports.create = (event, context, callback) => {
                     return callback(err, '[500] Internal Server Error');
                 }
                 cachedDb = db;
-                return createDoc(db, jsonContents, callback);
+                return helper.createDoc(db, jsonContents, callback);
             });
         } else {
-            createDoc(cachedDb, jsonContents, callback);
+            helper.createDoc(cachedDb, jsonContents, callback);
         }
     } catch (err) {
         console.error('an error occurred', err);
