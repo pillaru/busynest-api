@@ -1,8 +1,7 @@
-const MongoClient = require('mongodb').MongoClient;
 const Ajv = require('ajv');
 const organizationSchema = require('./organization-schema.json');
 const queryStringSchema = require('./querystring-schema.json');
-const helper = require('./helper');
+const provider = require('./mongodb-provider')('organizations');
 // const Logger = require('mongodb').Logger;
 
 // Set debug level
@@ -21,13 +20,22 @@ function badRequest(context, errors) {
     };
 }
 
-module.exports.get = (event, context, callback) => {
-    const uri = process.env.MONGODB_CONNECTION_STRING;
-    // the following line is critical for performance reasons to allow re-use
-    // of database connections across calls to this Lambda function and avoid
-    // closing the database connection. The first call to this lambda function
-    // takes about 5 seconds to complete, while subsequent, close calls will
-    // only take a few hundred milliseconds.
+function getCachedDb() {
+    return provider.getDatabase(cachedDb)
+    .then((db) => {
+        cachedDb = db;
+        return cachedDb;
+    });
+}
+
+function handleUnhandledError(callback) {
+    return (reason) => {
+        console.error(reason);
+        return callback(reason, '[500] Internal Server Error');
+    };
+}
+
+function get(event, context, callback) {
     context.callbackWaitsForEmptyEventLoop = false;
 
     const qs = event.queryStringParameters || { };
@@ -45,55 +53,23 @@ module.exports.get = (event, context, callback) => {
         return callback(null, badRequest(context, errors));
     }
 
-    try {
-        if (cachedDb === null) {
-            console.log('=> connecting to database');
-            MongoClient.connect(uri, (err, db) => {
-                if (err) {
-                    console.error('error connecting to database', err);
-                    return callback(err, '[500] Internal Server Error');
-                }
-                cachedDb = db;
-                return helper.getAll(qs.limit, qs.offset, db, callback);
-            });
-        } else {
-            helper.getAll(qs.limit, qs.offset, cachedDb, callback);
-        }
-    } catch (err) {
-        console.error('an error occurred', err);
-    }
-};
+    return getCachedDb()
+    .then((db) => provider.getAll(db, qs.limit, qs.offset, callback))
+    .catch(handleUnhandledError(callback));
+}
 
-module.exports.getById = (event, context, callback) => {
+function getById(event, context, callback) {
     if (!event.pathParameters || !event.pathParameters.id) {
         return callback(null, badRequest(context, [{ message: 'missing parameter', path: '/id' }]));
     }
-    const uri = process.env.MONGODB_CONNECTION_STRING;
-
     context.callbackWaitsForEmptyEventLoop = false;
 
-    try {
-        if (cachedDb === null) {
-            console.log('=> connecting to database');
-            return MongoClient.connect(uri, (err, db) => {
-                if (err) {
-                    console.error('error connecting to database', err);
-                    return callback(err, '[500] Internal Server Error');
-                }
-                cachedDb = db;
-                return helper.getById(db, event.pathParameters.id, callback);
-            });
-        }
-        return helper.getById(cachedDb, event.pathParameters.id, callback);
-    } catch (err) {
-        console.error('an error occurred', err);
-        return callback(err, '[500] Internal Server Error');
-    }
-};
+    return getCachedDb()
+    .then((db) => provider.getById(db, event.pathParameters.id, callback))
+    .catch(handleUnhandledError(callback));
+}
 
-module.exports.create = (event, context, callback) => {
-    const uri = process.env.MONGODB_CONNECTION_STRING;
-
+function create(event, context, callback) {
     context.callbackWaitsForEmptyEventLoop = false;
 
     const jsonContents = JSON.parse(event.body);
@@ -110,21 +86,13 @@ module.exports.create = (event, context, callback) => {
         return callback(null, badRequest(context, errors));
     }
 
-    try {
-        if (cachedDb === null) {
-            console.log('=> connecting to database');
-            MongoClient.connect(uri, (err, db) => {
-                if (err) {
-                    console.error('error connecting to database', err);
-                    return callback(err, '[500] Internal Server Error');
-                }
-                cachedDb = db;
-                return helper.createDoc(db, jsonContents, callback);
-            });
-        } else {
-            return helper.createDoc(cachedDb, jsonContents, callback);
-        }
-    } catch (err) {
-        console.error('an error occurred', err);
-    }
+    return getCachedDb()
+    .then((db) => provider.create(db, jsonContents, callback))
+    .catch(handleUnhandledError(callback));
+}
+
+module.exports = {
+    get,
+    getById,
+    create
 };
