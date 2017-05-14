@@ -86,25 +86,39 @@ provider:
 
 functions:
   getOrgs:
-    handler: handler.get
+    handler: organizationsHandler.get
     events:
       - http:
           path: organizations
           method: get
   
   getById:
-    handler: handler.getById
+    handler: organizationsHandler.getById
     events:
       - http:
           path: organizations/{id}
           method: get
 
   postOrg:
-    handler: handler.create
+    handler: organizationsHandler.create
     events:
       - http:
           path: organizations
           method: post
+
+  createOffice:
+    handler: officesHandler.create
+    events:
+      - http:
+          path: offices
+          method: post
+
+  getOffices:
+    handler: officesHandler.get
+    events:
+      - http:
+          path: offices
+          method: get
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
