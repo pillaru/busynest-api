@@ -39,10 +39,12 @@ function get(event, context, callback) {
     context.callbackWaitsForEmptyEventLoop = false;
 
     const qs = event.queryStringParameters || { };
-    qs.limit = Number(qs.limit) || 0;
-    qs.offset = Number(qs.offset) || 0;
+    qs.limit = typeof qs.limit === 'number' ? Number(qs.limit) : undefined;
+    qs.offset = typeof qs.limit === 'number' ? Number(qs.limit) : undefined;
 
-    const ajv = new Ajv();
+    console.log(qs.limit);
+
+    const ajv = new Ajv({ useDefaults: true });
     ajv.validate(queryStringSchema, qs);
     if (ajv.errors && ajv.errors.length > 0) {
         console.log(ajv.errors);
