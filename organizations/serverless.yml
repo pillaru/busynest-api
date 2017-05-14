@@ -88,15 +88,20 @@ provider:
 functions:
   getOrgs:
     handler: handler.get
-    timeout: 6
     events:
       - http:
           path: organizations
           method: get
+  
+  getById:
+    handler: handler.getById
+    events:
+      - http:
+          path: organizations/{id}
+          method: get
 
   postOrg:
     handler: handler.create
-    timeout: 6
     events:
       - http:
           path: organizations

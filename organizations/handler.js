@@ -64,6 +64,33 @@ module.exports.get = (event, context, callback) => {
     }
 };
 
+module.exports.getById = (event, context, callback) => {
+    if (!event.pathParameters || !event.pathParameters.id) {
+        return callback(null, badRequest(context, [{ message: 'missing parameter', path: '/id' }]));
+    }
+    const uri = process.env.MONGODB_CONNECTION_STRING;
+
+    context.callbackWaitsForEmptyEventLoop = false;
+
+    try {
+        if (cachedDb === null) {
+            console.log('=> connecting to database');
+            return MongoClient.connect(uri, (err, db) => {
+                if (err) {
+                    console.error('error connecting to database', err);
+                    return callback(err, '[500] Internal Server Error');
+                }
+                cachedDb = db;
+                return helper.getById(db, event.pathParameters.id, callback);
+            });
+        }
+        return helper.getById(cachedDb, event.pathParameters.id, callback);
+    } catch (err) {
+        console.error('an error occurred', err);
+        return callback(err, '[500] Internal Server Error');
+    }
+};
+
 module.exports.create = (event, context, callback) => {
     const uri = process.env.MONGODB_CONNECTION_STRING;
 

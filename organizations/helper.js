@@ -1,3 +1,5 @@
+const ObjectID = require('mongodb').ObjectID;
+
 function getAll(limit, offset, db, callback) {
     db.collection('organizations')
         .find({})
@@ -13,6 +15,21 @@ function getAll(limit, offset, db, callback) {
                     body: JSON.stringify(docs)
                 });
             }
+        });
+}
+
+function getById(db, id, callback) {
+    console.log(id);
+    db.collection('organizations')
+        .findOne({ _id: new ObjectID(id) }, (err, doc) => {
+            if (err) {
+                console.log(err);
+                throw err;
+            }
+            if (!doc) {
+                return callback(null, { statusCode: 404 });
+            }
+            return callback(null, { statusCode: 200, body: JSON.stringify(doc) });
         });
 }
 
@@ -32,5 +49,6 @@ function createDoc(db, json, callback) {
 
 module.exports = {
     getAll,
+    getById,
     createDoc
 };
