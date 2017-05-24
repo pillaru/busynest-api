@@ -23,21 +23,23 @@ function get(event, context, callback) {
 
     const qs = event.queryStringParameters || { };
     qs.limit = typeof qs.limit === 'number' ? Number(qs.limit) : undefined;
-    qs.offset = typeof qs.limit === 'number' ? Number(qs.limit) : undefined;
+    qs.offset = typeof qs.offset === 'number' ? Number(qs.offset) : undefined;
 
     const ajv = new Ajv({ useDefaults: true });
-    ajv.validate(queryStringSchema, qs);
-    if (ajv.errors && ajv.errors.length > 0) {
-        console.log(ajv.errors);
-        const errors = ajv.errors.map((error) => ({
-            message: error.message,
-            path: error.dataPath
-        }));
-        return callback(null, helper.badRequest(context, errors));
+    const validationResult = helper.validateSchema(ajv, queryStringSchema, qs);
+
+    if (!validationResult.isValid) {
+        return callback(null, helper.badRequest(context, validationResult.errors));
     }
 
     return getCachedDb()
-    .then((db) => provider.getAll(db, qs.limit, qs.offset, callback))
+    .then((db) => provider.getAll(db, {}, qs.limit, qs.offset))
+    .then((docs) => {
+        callback(null, {
+            statusCode: 200,
+            body: JSON.stringify(docs)
+        });
+    })
     .catch(helper.handleUnhandledError(callback));
 }
 

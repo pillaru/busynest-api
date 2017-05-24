@@ -1,6 +1,22 @@
 const MongoClient = require('mongodb').MongoClient;
 const ObjectID = require('mongodb').ObjectID;
 
+function getItDotted(obj) {
+    const res = {};
+    (function recurse(val, current) {
+        for (const key in val) {
+            const value = val[key];
+            const newKey = (current ? current + "." + key : key);  // joined key with dot
+            if (value && typeof value === 'object') {
+                recurse(value, newKey);  // it's a nested object, so do it again
+            } else {
+                res[newKey] = value;  // it's not an object, so set the property
+            }
+        }
+    })(obj);
+    return res;
+}
+
 function getDatabase(cachedDatabase) {
     const uri = process.env.MONGODB_CONNECTION_STRING;
 
@@ -20,22 +36,22 @@ function getDatabase(cachedDatabase) {
     return new Promise(resolver);
 }
 
-function getAll(collection, db, limit, offset, callback) {
-    db.collection(collection)
-        .find({})
-        .limit(limit)
-        .skip(offset)
-        .toArray((err, docs) => {
-            if (err) {
-                console.error('an error occurred in getAll', err);
-                callback(null, JSON.stringify(err));
-            } else {
-                callback(null, {
-                    statusCode: 200,
-                    body: JSON.stringify(docs)
-                });
-            }
-        });
+function getAll(collection, db, filter, limit, offset) {
+    function resolver(resolve, reject) {
+        filter = getItDotted(filter);
+        db.collection(collection)
+            .find(filter)
+            .limit(limit)
+            .skip(offset)
+            .toArray((err, docs) => {
+                if (err) {
+                    console.error('an error occurred in getAll', err);
+                    reject(err);
+                }
+                resolve(docs);
+            });
+    }
+    return new Promise(resolver);
 }
 
 function getById(collection, db, id, callback) {
@@ -57,7 +73,7 @@ function createDoc(collection, db, json, callback) {
     // console.log(json);
     return db.collection(collection).insertOne(json).then((result) => {
         // console.log(result);
-        console.log(`created an entry into the ${collection} collection with id: 
+        console.log(`created an entry into the ${collection} collection with id:
             ${result.insertedId}`);
         callback(null, { statusCode: 201 });
     })
@@ -69,7 +85,8 @@ function createDoc(collection, db, json, callback) {
 
 module.exports = collection => ({
     getDatabase,
-    getAll: (db, limit, offset, callback) => getAll(collection, db, limit, offset, callback),
+    getAll: (db, filter, limit, offset) => getAll(
+        collection, db, filter, limit, offset),
     getById: (db, id, callback) => getById(collection, db, id, callback),
     create: (db, json, callback) => createDoc(collection, db, json, callback)
 });

@@ -19,7 +19,9 @@ function get(event, context, callback) {
 
     const qs = event.queryStringParameters || { };
     qs.limit = typeof qs.limit === 'number' ? Number(qs.limit) : undefined;
-    qs.offset = typeof qs.limit === 'number' ? Number(qs.limit) : undefined;
+    qs.offset = typeof qs.offset === 'number' ? Number(qs.offset) : undefined;
+
+    qs.filter = helper.parseFilter(qs);
 
     const ajv = new Ajv({ useDefaults: true });
     const validationResult = helper.validateSchema(ajv, queryStringSchema, qs);
@@ -28,8 +30,19 @@ function get(event, context, callback) {
     }
 
     return getCachedDb()
-    .then((db) => provider.getAll(db, qs.limit, qs.offset, callback))
-    .catch(helper.handleUnhandledError(callback));
+        .then((db) => {
+            console.log('provider');
+            return provider.getAll(db, qs.filter, qs.limit, qs.offset);
+        })
+        .then((docs) => {
+            console.log('was herer');
+            callback(null, {
+                statusCode: 200,
+                body: JSON.stringify(docs)
+            });
+            return Promise.resolve();
+        })
+        .catch(helper.handleUnhandledError(callback));
 }
 
 function create(event, context, callback) {
