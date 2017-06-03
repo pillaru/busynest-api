@@ -73,7 +73,10 @@ function create(event, context, callback) {
     }
 
     return getCachedDb()
-    .then((db) => provider.create(db, jsonContents, callback))
+    .then(db => provider.create(db, jsonContents))
+    .then(() => callback(null, {
+        statusCode: 201
+    }))
     .catch(helper.handleUnhandledError(callback));
 }
 

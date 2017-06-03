@@ -13,7 +13,7 @@ function getItDotted(obj) {
                 res[newKey] = value;  // it's not an object, so set the property
             }
         }
-    })(obj);
+    }(obj));
     return res;
 }
 
@@ -69,18 +69,19 @@ function getById(collection, db, id, callback) {
         });
 }
 
-function createDoc(collection, db, json, callback) {
-    // console.log(json);
-    return db.collection(collection).insertOne(json).then((result) => {
-        // console.log(result);
-        console.log(`created an entry into the ${collection} collection with id:
+function createDoc(collection, db, json) {
+    function resolver(resolve, reject) {
+        db.collection(collection).insertOne(json).then((result) => {
+            console.log(`created an entry into the ${collection} collection with id:
             ${result.insertedId}`);
-        callback(null, { statusCode: 201 });
-    })
-    .catch((err) => {
-        console.error('an error occurred in createDoc', err);
-        callback(null, JSON.stringify(err));
-    });
+            resolve(result.insertedId);
+        })
+        .catch((err) => {
+            reject(err);
+        });
+    }
+
+    return new Promise(resolver);
 }
 
 module.exports = collection => ({
@@ -88,5 +89,5 @@ module.exports = collection => ({
     getAll: (db, filter, limit, offset) => getAll(
         collection, db, filter, limit, offset),
     getById: (db, id, callback) => getById(collection, db, id, callback),
-    create: (db, json, callback) => createDoc(collection, db, json, callback)
+    create: (db, json) => createDoc(collection, db, json)
 });
