@@ -22,8 +22,8 @@ function get(event, context, callback) {
     context.callbackWaitsForEmptyEventLoop = false;
 
     const qs = event.queryStringParameters || { };
-    qs.limit = typeof qs.limit === 'number' ? Number(qs.limit) : undefined;
-    qs.offset = typeof qs.offset === 'number' ? Number(qs.offset) : undefined;
+    qs.limit = isNaN(Number(qs.limit)) ? undefined : Number(qs.limit);
+    qs.offset = isNaN(Number(qs.offset)) ? undefined : Number(qs.offset);
 
     const ajv = new Ajv({ useDefaults: true });
     const validationResult = helper.validateSchema(ajv, queryStringSchema, qs);

@@ -18,8 +18,8 @@ function get(event, context, callback) {
     context.callbackWaitsForEmptyEventLoop = false;
 
     const qs = event.queryStringParameters || { };
-    qs.limit = typeof qs.limit === 'number' ? Number(qs.limit) : undefined;
-    qs.offset = typeof qs.offset === 'number' ? Number(qs.offset) : undefined;
+    qs.limit = isNaN(Number(qs.limit)) ? undefined : Number(qs.limit);
+    qs.offset = isNaN(Number(qs.offset)) ? undefined : Number(qs.offset);
 
     qs.filter = helper.parseFilter(qs);
 

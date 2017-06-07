@@ -6,7 +6,7 @@ function getItDotted(obj) {
     (function recurse(val, current) {
         for (const key in val) {
             const value = val[key];
-            const newKey = (current ? current + "." + key : key);  // joined key with dot
+            const newKey = (current ? `${current}.${key}` : key);  // joined key with dot
             if (value && typeof value === 'object') {
                 recurse(value, newKey);  // it's a nested object, so do it again
             } else {
@@ -36,22 +36,38 @@ function getDatabase(cachedDatabase) {
     return new Promise(resolver);
 }
 
+function transform(obj) {
+    Object.defineProperty(obj, 'id', Object.getOwnPropertyDescriptor(obj, '_id'));
+    delete obj._id;
+    return obj;
+}
+
 function getAll(collection, db, filter, limit, offset) {
+    filter = getItDotted(filter);
+
     function resolver(resolve, reject) {
-        filter = getItDotted(filter);
         db.collection(collection)
-            .find(filter)
-            .limit(limit)
-            .skip(offset)
-            .toArray((err, docs) => {
+        .find(filter)
+        .limit(limit).skip(offset)
+        .toArray((er, result) => {
+            if (er) {
+                console.error('an error occurred in getAll', er);
+                reject(er);
+            }
+            db.collection(collection).count(filter, (err, count) => {
                 if (err) {
                     console.error('an error occurred in getAll', err);
                     reject(err);
                 }
-                resolve(docs);
+                resolve({ totalSize: count, content: result });
             });
+        });
     }
-    return new Promise(resolver);
+    return new Promise(resolver)
+    .then((result) => {
+        result.content = result.content.map(c => transform(c));
+        return result;
+    });
 }
 
 function getById(collection, db, id, callback) {
@@ -65,7 +81,9 @@ function getById(collection, db, id, callback) {
             if (!doc) {
                 return callback(null, { statusCode: 404 });
             }
-            return callback(null, { statusCode: 200, body: JSON.stringify(doc) });
+            return callback(null, {
+                statusCode: 200, body: JSON.stringify(transform(doc))
+            });
         });
 }
 
