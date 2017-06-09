@@ -80,8 +80,25 @@ function create(event, context, callback) {
     .catch(helper.handleUnhandledError(callback));
 }
 
+function remove(event, context, callback) {
+    context.callbackWaitsForEmptyEventLoop = false; // eslint-disable-line no-param-reassign
+
+    if (!event.pathParameters || !event.pathParameters.id) {
+        return callback(null,
+            helper.badRequest(context, [{ message: 'missing parameter', path: '/id' }]));
+    }
+
+    return getCachedDb()
+    .then(db => provider.remove(db, event.pathParameters.id))
+    .then(() => callback(null, {
+        statusCode: 204 // No-Content
+    }))
+    .catch(helper.handleUnhandledError(callback));
+}
+
 module.exports = {
     get,
     getById,
-    create
+    create,
+    remove
 };

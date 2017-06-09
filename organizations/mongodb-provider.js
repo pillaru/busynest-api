@@ -43,7 +43,7 @@ function transform(obj) {
 }
 
 function getAll(collection, db, filter, limit, offset) {
-    filter = getItDotted(filter);
+    filter = getItDotted(filter); // eslint-disable-line no-param-reassign
 
     function resolver(resolve, reject) {
         db.collection(collection)
@@ -65,7 +65,8 @@ function getAll(collection, db, filter, limit, offset) {
     }
     return new Promise(resolver)
     .then((result) => {
-        result.content = result.content.map(c => transform(c));
+        result.content = result.content // eslint-disable-line no-param-reassign
+            .map(c => transform(c));
         return result;
     });
 }
@@ -102,10 +103,26 @@ function createDoc(collection, db, json) {
     return new Promise(resolver);
 }
 
+function deleteDoc(collection, db, id) {
+    function resolver(resolve, reject) {
+        db.collection(collection).remove({
+            _id: new ObjectID(id)
+        }, { single: true }, (err) => {
+            if (err) {
+                return reject(err);
+            }
+            return resolve();
+        });
+    }
+
+    return new Promise(resolver);
+}
+
 module.exports = collection => ({
     getDatabase,
     getAll: (db, filter, limit, offset) => getAll(
         collection, db, filter, limit, offset),
     getById: (db, id, callback) => getById(collection, db, id, callback),
-    create: (db, json) => createDoc(collection, db, json)
+    create: (db, json) => createDoc(collection, db, json),
+    remove: (db, id) => deleteDoc(collection, db, id)
 });

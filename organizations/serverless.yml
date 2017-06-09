@@ -106,6 +106,13 @@ functions:
           path: organizations
           method: post
 
+  deleteOrg:
+    handler: organizationsHandler.remove
+    events:
+      - http:
+          path: organizations/{id}
+          method: delete
+
   createOffice:
     handler: officesHandler.create
     events:
