@@ -1,12 +1,8 @@
 const Ajv = require('ajv');
-const organizationSchema = require('./organization-schema.json');
-const queryStringSchema = require('./querystring-schema.json');
-const provider = require('./mongodb-provider')('organizations');
-const helper = require('./handlerHelper');
-// const Logger = require('mongodb').Logger;
-
-// Set debug level
-// Logger.setLevel('debug');
+const organizationSchema = require('../schemas/organization-schema.json');
+const queryStringSchema = require('../schemas/querystring-schema.json');
+const provider = require('../providers/mongodb-provider')('organizations');
+const helper = require('../helpers/handlerHelper');
 
 let cachedDb = null;
 

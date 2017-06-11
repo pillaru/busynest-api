@@ -20,6 +20,8 @@ function getItDotted(obj) {
 function getDatabase(cachedDatabase) {
     const uri = process.env.MONGODB_CONNECTION_STRING;
 
+    console.log(uri);
+
     function resolver(resolve, reject) {
         if (cachedDatabase != null) {
             return resolve(cachedDatabase);

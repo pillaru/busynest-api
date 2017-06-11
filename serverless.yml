@@ -1,0 +1,85 @@
+service: organizations
+
+package:
+  include:
+    - ../node_modules/async/**
+    - ../node_modules/bson/**
+    - ../node_modules/co/**
+    - ../node_modules/extend/**
+    - ../node_modules/kareem/**
+    - ../node_modules/hooks-fixed/**
+    - ../node_modules/mongodb/**
+    - ../node_modules/mongodb-core/**
+    - ../node_modules/mongoose/**
+    - ../node_modules/mongoose-auto-increment/**
+    - ../node_modules/mpath/**
+    - ../node_modules/mpromise/**
+    - ../node_modules/mquery/**
+    - ../node_modules/ms/**
+    - ../node_modules/muri/**
+    - ../node_modules/regexp-clone/**
+    - ../node_modules/require_optional/**
+    - ../node_modules/resolve-from/**
+    - ../node_modules/semver/**
+    - ../node_modules/sliced/**
+    - ../node_modules/q/**
+    - ../node_modules/ajv/**
+    - ../node_modules/json-stable-stringify/**
+
+# You can pin your service to only deploy with a specific Serverless version
+# Check out our docs for more details
+# frameworkVersion: "=X.X.X"
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  profile: sls
+  stage: dev
+  region: eu-west-1
+  environment: # Service wide environment variables
+    MONGODB_CONNECTION_STRING: ${env:bizhub_api_mongodb_connectionstring_dev}
+
+functions:
+  getOrgs:
+    handler: src/handlers/organizations-handler.get
+    events:
+      - http:
+          path: organizations
+          method: get
+  
+  getOrgById:
+    handler: src/handlers/organizations-handler.getById
+    events:
+      - http:
+          path: organizations/{id}
+          method: get
+
+  postOrg:
+    handler: src/handlers/organizations-handler.create
+    events:
+      - http:
+          path: organizations
+          method: post
+
+  deleteOrg:
+    handler: src/handlers/organizations-handler.remove
+    events:
+      - http:
+          path: organizations/{id}
+          method: delete
+
+  createOffice:
+    handler: src/handlers/offices-handler.create
+    events:
+      - http:
+          path: offices
+          method: post
+
+  getOffices:
+    handler: src/handlers/offices-handler.get
+    events:
+      - http:
+          path: offices
+          method: get
+plugins:
+  - serverless-offline

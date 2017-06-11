@@ -1,8 +1,8 @@
 const Ajv = require('ajv');
-const officeSchema = require('./officeSchema');
-const queryStringSchema = require('./querystring-schema.json');
-const provider = require('./mongodb-provider')('offices');
-const helper = require('./handlerHelper');
+const officeSchema = require('../schemas/office-schema');
+const queryStringSchema = require('../schemas/querystring-schema.json');
+const provider = require('../providers/mongodb-provider')('offices');
+const helper = require('../helpers/handlerHelper');
 
 let cachedDb = null;
 
