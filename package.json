@@ -21,27 +21,14 @@
   "homepage": "https://github.com/chekkan/bizhub-api#readme",
   "dependencies": {
     "ajv": "^5.0.1",
-    "body-parser": "^1.15.2",
-    "cors": "^2.7.1",
-    "express": "^4.13.4",
-    "express-stormpath": "^3.1.5",
-    "express-validator": "^2.20.8",
-    "mongodb": "^2.2.5",
-    "mongoose": "^4.5.8",
-    "mongoose-auto-increment": "^5.0.1",
-    "morgan": "^1.7.0",
-    "promise": "^7.1.1",
-    "q": "^1.4.1",
-    "winston": "^2.2.0"
+    "mongodb": "^2.2.5"
   },
   "devDependencies": {
-    "env-cmd": "^2.2.0",
     "eslint": "^3.3.0",
     "eslint-config-airbnb": "^10.0.1",
     "eslint-plugin-import": "^1.13.0",
     "eslint-plugin-jsx-a11y": "^2.1.0",
     "eslint-plugin-react": "^6.1.0",
-    "nodemon": "^1.11.0",
     "serverless-offline": "^3.14.0"
   }
 }
