@@ -1,13 +1,16 @@
+const MongoDbProvider = require('../providers/mongodb-provider');
+
 const Ajv = require('ajv');
 const organizationSchema = require('../schemas/organization-schema.json');
 const queryStringSchema = require('../schemas/querystring-schema.json');
-const provider = require('../providers/mongodb-provider')('organizations');
 const helper = require('../helpers/handlerHelper');
 
 let cachedDb = null;
+const collectioName = 'organizations';
+const provider = new MongoDbProvider(collectioName);
 
 function getCachedDb() {
-    return provider.getDatabase(cachedDb)
+    return MongoDbProvider.getDatabase(cachedDb)
     .then((db) => {
         cachedDb = db;
         return cachedDb;

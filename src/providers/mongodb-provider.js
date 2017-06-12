@@ -1,6 +1,12 @@
 const MongoClient = require('mongodb').MongoClient;
 const ObjectID = require('mongodb').ObjectID;
 
+function transform(obj) {
+    Object.defineProperty(obj, 'id', Object.getOwnPropertyDescriptor(obj, '_id'));
+    delete obj._id;
+    return obj;
+}
+
 function getItDotted(obj) {
     const res = {};
     (function recurse(val, current) {
@@ -17,114 +23,109 @@ function getItDotted(obj) {
     return res;
 }
 
-function getDatabase(cachedDatabase) {
-    const uri = process.env.MONGODB_CONNECTION_STRING;
-
-    console.log(uri);
-
-    function resolver(resolve, reject) {
-        if (cachedDatabase != null) {
-            return resolve(cachedDatabase);
-        }
-        console.log('=> connecting to database');
-        return MongoClient.connect(uri, (err, db) => {
-            if (err) {
-                console.error('error connecting to database', err);
-                return reject(err);
-            }
-            return resolve(db);
-        });
+class MongoDbProvider {
+    constructor(collectionName) {
+        this.collectionName = collectionName;
     }
-    return new Promise(resolver);
-}
 
-function transform(obj) {
-    Object.defineProperty(obj, 'id', Object.getOwnPropertyDescriptor(obj, '_id'));
-    delete obj._id;
-    return obj;
-}
+    static getDatabase(cachedDatabase) {
+        const uri = process.env.MONGODB_CONNECTION_STRING;
 
-function getAll(collection, db, filter, limit, offset) {
-    filter = getItDotted(filter); // eslint-disable-line no-param-reassign
+        console.log(uri);
 
-    function resolver(resolve, reject) {
-        db.collection(collection)
-        .find(filter)
-        .limit(limit).skip(offset)
-        .toArray((er, result) => {
-            if (er) {
-                console.error('an error occurred in getAll', er);
-                reject(er);
+        function resolver(resolve, reject) {
+            if (cachedDatabase != null) {
+                return resolve(cachedDatabase);
             }
-            db.collection(collection).count(filter, (err, count) => {
+            console.log('=> connecting to database');
+            return MongoClient.connect(uri, (err, db) => {
                 if (err) {
-                    console.error('an error occurred in getAll', err);
-                    reject(err);
+                    console.error('error connecting to database', err);
+                    return reject(err);
                 }
-                resolve({ totalSize: count, content: result });
+                return resolve(db);
             });
-        });
+        }
+        return new Promise(resolver);
     }
-    return new Promise(resolver)
-    .then((result) => {
-        result.content = result.content // eslint-disable-line no-param-reassign
-            .map(c => transform(c));
-        return result;
-    });
-}
 
-function getById(collection, db, id, callback) {
-    console.log(id);
-    db.collection(collection)
-        .findOne({ _id: new ObjectID(id) }, (err, doc) => {
-            if (err) {
-                console.log(err);
-                throw err;
-            }
-            if (!doc) {
-                return callback(null, { statusCode: 404 });
-            }
-            return callback(null, {
-                statusCode: 200, body: JSON.stringify(transform(doc))
+    getAll(db, filter, limit, offset) {
+        filter = getItDotted(filter);
+        const self = this;
+
+        function resolver(resolve, reject) {
+            db.collection(self.collectionName)
+            .find(filter)
+            .limit(limit).skip(offset)
+            .toArray((er, result) => {
+                if (er) {
+                    console.error('an error occurred in getAll', er);
+                    reject(er);
+                }
+                db.collection(self.collectionName).count(filter, (err, count) => {
+                    if (err) {
+                        console.error('an error occurred in getAll', err);
+                        reject(err);
+                    }
+                    resolve({ totalSize: count, content: result });
+                });
             });
-        });
-}
-
-function createDoc(collection, db, json) {
-    function resolver(resolve, reject) {
-        db.collection(collection).insertOne(json).then((result) => {
-            console.log(`created an entry into the ${collection} collection with id:
-            ${result.insertedId}`);
-            resolve(result.insertedId);
-        })
-        .catch((err) => {
-            reject(err);
+        }
+        return new Promise(resolver)
+        .then((result) => {
+            result.content = result.content
+                .map(c => transform(c));
+            return result;
         });
     }
 
-    return new Promise(resolver);
-}
-
-function deleteDoc(collection, db, id) {
-    function resolver(resolve, reject) {
-        db.collection(collection).remove({
-            _id: new ObjectID(id)
-        }, { single: true }, (err) => {
-            if (err) {
-                return reject(err);
-            }
-            return resolve();
-        });
+    getById(db, id, callback) {
+        db.collection(this.collectionName)
+            .findOne({ _id: new ObjectID(id) }, (err, doc) => {
+                if (err) {
+                    console.log(err);
+                    throw err;
+                }
+                if (!doc) {
+                    return callback(null, { statusCode: 404 });
+                }
+                return callback(null, {
+                    statusCode: 200, body: JSON.stringify(transform(doc))
+                });
+            });
     }
 
-    return new Promise(resolver);
+    create(db, json) {
+        const self = this;
+        function resolver(resolve, reject) {
+            db.collection(self.collectionName).insertOne(json).then((result) => {
+                console.log(`created an entry into the ${self.collectionName} collection with id:
+                ${result.insertedId}`);
+                resolve(result.insertedId);
+            })
+            .catch((err) => {
+                reject(err);
+            });
+        }
+
+        return new Promise(resolver);
+    }
+
+    remove(db, id) {
+        const self = this;
+        function resolver(resolve, reject) {
+            db.collection(self.collectionName).remove({
+                _id: new ObjectID(id)
+            }, { single: true }, (err) => {
+                if (err) {
+                    return reject(err);
+                }
+                return resolve();
+            });
+        }
+
+        return new Promise(resolver);
+    }
 }
 
-module.exports = collection => ({
-    getDatabase,
-    getAll: (db, filter, limit, offset) => getAll(
-        collection, db, filter, limit, offset),
-    getById: (db, id, callback) => getById(collection, db, id, callback),
-    create: (db, json) => createDoc(collection, db, json),
-    remove: (db, id) => deleteDoc(collection, db, id)
-});
+module.exports = MongoDbProvider;
