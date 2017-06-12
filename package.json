@@ -6,7 +6,7 @@
   "scripts": {
     "start": "npm run build && env-cmd .env node app.js",
     "watch": "nodemon --exec npm run start",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest tests",
     "build": "cp ./api/swagger/swagger.yaml ./public"
   },
   "repository": {
@@ -29,6 +29,7 @@
     "eslint-plugin-import": "^1.13.0",
     "eslint-plugin-jsx-a11y": "^2.1.0",
     "eslint-plugin-react": "^6.1.0",
+    "jest": "^20.0.4",
     "serverless-offline": "^3.14.0"
   }
 }
