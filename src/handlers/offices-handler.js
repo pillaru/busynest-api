@@ -19,7 +19,7 @@ function getCachedDb() {
 }
 
 function get(event, context, callback) {
-    context.callbackWaitsForEmptyEventLoop = false;
+    Object.assign(context, { callbackWaitsForEmptyEventLoop: false });
 
     const qs = event.queryStringParameters || { };
     qs.limit = isNaN(Number(qs.limit)) ? undefined : Number(qs.limit);
@@ -50,7 +50,7 @@ function get(event, context, callback) {
 }
 
 function create(event, context, callback) {
-    context.callbackWaitsForEmptyEventLoop = false;
+    Object.assign(context, { callbackWaitsForEmptyEventLoop: false });
 
     const jsonContents = JSON.parse(event.body);
 

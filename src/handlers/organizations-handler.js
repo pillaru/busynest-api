@@ -18,7 +18,7 @@ function getCachedDb() {
 }
 
 function get(event, context, callback) {
-    context.callbackWaitsForEmptyEventLoop = false;
+    Object.assign(context, { callbackWaitsForEmptyEventLoop: false });
 
     const qs = event.queryStringParameters || { };
     qs.limit = isNaN(Number(qs.limit)) ? undefined : Number(qs.limit);
@@ -47,7 +47,7 @@ function getById(event, context, callback) {
         return callback(null,
             helper.badRequest(context, [{ message: 'missing parameter', path: '/id' }]));
     }
-    context.callbackWaitsForEmptyEventLoop = false;
+    Object.assign(context, { callbackWaitsForEmptyEventLoop: false });
 
     return getCachedDb()
     .then((db) => provider.getById(db, event.pathParameters.id, callback))
@@ -55,7 +55,7 @@ function getById(event, context, callback) {
 }
 
 function create(event, context, callback) {
-    context.callbackWaitsForEmptyEventLoop = false;
+    Object.assign(context, { callbackWaitsForEmptyEventLoop: false });
 
     const jsonContents = JSON.parse(event.body);
 
@@ -80,7 +80,7 @@ function create(event, context, callback) {
 }
 
 function remove(event, context, callback) {
-    context.callbackWaitsForEmptyEventLoop = false; // eslint-disable-line no-param-reassign
+    Object.assign(context, { callbackWaitsForEmptyEventLoop: false });
 
     if (!event.pathParameters || !event.pathParameters.id) {
         return callback(null,

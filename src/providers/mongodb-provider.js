@@ -3,8 +3,9 @@ const ObjectID = require('mongodb').ObjectID;
 
 function transform(obj) {
     Object.defineProperty(obj, 'id', Object.getOwnPropertyDescriptor(obj, '_id'));
-    delete obj._id;
-    return obj;
+    const transformed = obj;
+    delete transformed._id;
+    return transformed;
 }
 
 function getItDotted(obj) {
@@ -50,19 +51,19 @@ class MongoDbProvider {
     }
 
     getAll(db, filter, limit, offset) {
-        filter = getItDotted(filter);
+        const parsedFilter = getItDotted(filter);
         const self = this;
 
         function resolver(resolve, reject) {
             db.collection(self.collectionName)
-            .find(filter)
+            .find(parsedFilter)
             .limit(limit).skip(offset)
             .toArray((er, result) => {
                 if (er) {
                     console.error('an error occurred in getAll', er);
                     reject(er);
                 }
-                db.collection(self.collectionName).count(filter, (err, count) => {
+                db.collection(self.collectionName).count(parsedFilter, (err, count) => {
                     if (err) {
                         console.error('an error occurred in getAll', err);
                         reject(err);
@@ -73,8 +74,9 @@ class MongoDbProvider {
         }
         return new Promise(resolver)
         .then((result) => {
-            result.content = result.content
+            const transformed = result.content
                 .map(c => transform(c));
+            Object.assign(result, { content: transformed });
             return result;
         });
     }

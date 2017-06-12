@@ -4,6 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
+    "lint": "eslint src tests",
     "test": "jest tests --coverage",
     "deploy": "serverless deploy"
   },

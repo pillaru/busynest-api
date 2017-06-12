@@ -35,7 +35,7 @@ function assign(obj, keyPath, value) {
     for (let i = 0; i < lastKeyIndex; ++i) {
         const key = keyPath[i];
         if (!(key in obj)) {
-            obj[key] = {};
+            Object.assign(obj, { [key]: {} });
         }
         obj = obj[key];
     }
