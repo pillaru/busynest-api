@@ -10,6 +10,7 @@ package:
     - node_modules/mongodb/**
     - node_modules/mongodb-core/**
     - node_modules/ms/**
+    - node_modules/require_optional/**
     - node_modules/resolve-from/**
     - node_modules/semver/**
     - node_modules/json-stable-stringify/**
