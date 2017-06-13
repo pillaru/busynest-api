@@ -33,12 +33,7 @@ function get(event, context, callback) {
 
     return getCachedDb()
     .then((db) => provider.getAll(db, {}, qs.limit, qs.offset))
-    .then((docs) => {
-        callback(null, {
-            statusCode: 200,
-            body: JSON.stringify(docs)
-        });
-    })
+    .then(helper.handleOk(callback))
     .catch(helper.handleUnhandledError(callback));
 }
 
@@ -50,8 +45,9 @@ function getById(event, context, callback) {
     Object.assign(context, { callbackWaitsForEmptyEventLoop: false });
 
     return getCachedDb()
-    .then((db) => provider.getById(db, event.pathParameters.id, callback))
-    .catch(helper.handleUnhandledError(callback));
+    .then((db) => provider.getById(db, event.pathParameters.id))
+    .then(helper.handleOk(callback))
+    .catch(helper.handleError(callback));
 }
 
 function create(event, context, callback) {
@@ -73,9 +69,7 @@ function create(event, context, callback) {
 
     return getCachedDb()
     .then(db => provider.create(db, jsonContents))
-    .then(() => callback(null, {
-        statusCode: 201
-    }))
+    .then(helper.handleCreated(callback))
     .catch(helper.handleUnhandledError(callback));
 }
 
@@ -89,9 +83,7 @@ function remove(event, context, callback) {
 
     return getCachedDb()
     .then(db => provider.remove(db, event.pathParameters.id))
-    .then(() => callback(null, {
-        statusCode: 204 // No-Content
-    }))
+    .then(helper.handleNoContent(callback))
     .catch(helper.handleUnhandledError(callback));
 }
 

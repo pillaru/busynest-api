@@ -81,20 +81,22 @@ class MongoDbProvider {
         });
     }
 
-    getById(db, id, callback) {
-        db.collection(this.collectionName)
+    getById(db, id) {
+        const self = this;
+        function resolver(resolve, reject) {
+            db.collection(self.collectionName)
             .findOne({ _id: new ObjectID(id) }, (err, doc) => {
                 if (err) {
-                    console.log(err);
-                    throw err;
+                    reject(err);
                 }
                 if (!doc) {
-                    return callback(null, { statusCode: 404 });
+                    return reject({ statusCode: 404 });
                 }
-                return callback(null, {
-                    statusCode: 200, body: JSON.stringify(transform(doc))
-                });
+                return resolve(transform(doc));
             });
+        }
+
+        return new Promise(resolver);
     }
 
     create(db, json) {

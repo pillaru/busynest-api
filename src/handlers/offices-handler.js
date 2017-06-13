@@ -34,18 +34,8 @@ function get(event, context, callback) {
     }
 
     return getCachedDb()
-        .then((db) => {
-            console.log('provider');
-            return provider.getAll(db, qs.filter, qs.limit, qs.offset);
-        })
-        .then((docs) => {
-            console.log('was herer');
-            callback(null, {
-                statusCode: 200,
-                body: JSON.stringify(docs)
-            });
-            return Promise.resolve();
-        })
+        .then((db) => provider.getAll(db, qs.filter, qs.limit, qs.offset))
+        .then(helper.handleOk(callback))
         .catch(helper.handleUnhandledError(callback));
 }
 
@@ -62,9 +52,7 @@ function create(event, context, callback) {
 
     return getCachedDb()
     .then((db) => provider.create(db, jsonContents))
-    .then(() => callback(null, {
-        statusCode: 201
-    }))
+    .then(helper.handleCreated(callback))
     .catch(helper.handleUnhandledError(callback));
 }
 
