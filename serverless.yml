@@ -30,7 +30,7 @@ provider:
 
 functions:
   getOrgs:
-    handler: src/handlers/organizations-handler.get
+    handler: src/handlers/handler-factory.get
     events:
       - http:
           path: organizations
@@ -38,15 +38,15 @@ functions:
           cors: true
   
   getOrgById:
-    handler: src/handlers/organizations-handler.getById
+    handler: src/handlers/handler-factory.getById
     events:
       - http:
           path: organizations/{id}
           method: get
           cors: true
 
-  postOrg:
-    handler: src/handlers/organizations-handler.create
+  createOrg:
+    handler: src/handlers/handler-factory.create
     events:
       - http:
           path: organizations
@@ -54,7 +54,7 @@ functions:
           cors: true
 
   deleteOrg:
-    handler: src/handlers/organizations-handler.remove
+    handler: src/handlers/handler-factory.remove
     events:
       - http:
           path: organizations/{id}
@@ -62,7 +62,7 @@ functions:
           cors: true
 
   createOffice:
-    handler: src/handlers/offices-handler.create
+    handler: src/handlers/handler-factory.create
     events:
       - http:
           path: offices
@@ -70,11 +70,28 @@ functions:
           cors: true
 
   getOffices:
-    handler: src/handlers/offices-handler.get
+    handler: src/handlers/handler-factory.get
     events:
       - http:
           path: offices
           method: get
           cors: true
+
+  createTimeEntry:
+    handler: src/handlers/handler-factory.create
+    events:
+      - http:
+          path: time-entries
+          method: post
+          cors: true
+  
+  getTimeEntries:
+    handler: src/handlers/handler-factory.get
+    events:
+      - http:
+          path: time-entries
+          method: get
+          cors: true
+
 plugins:
   - serverless-offline

@@ -25,18 +25,18 @@ function getItDotted(obj) {
 }
 
 class MongoDbProvider {
-    constructor(collectionName) {
+    constructor(database, collectionName) {
+        this.database = database;
         this.collectionName = collectionName;
     }
 
-    static getDatabase(cachedDatabase) {
+    getDatabase() {
         const uri = process.env.MONGODB_CONNECTION_STRING;
-
-        console.log(uri);
+        const self = this;
 
         function resolver(resolve, reject) {
-            if (cachedDatabase != null) {
-                return resolve(cachedDatabase);
+            if (self.database != null) {
+                return resolve(self.database);
             }
             console.log('=> connecting to database');
             return MongoClient.connect(uri, (err, db) => {
@@ -44,31 +44,35 @@ class MongoDbProvider {
                     console.error('error connecting to database', err);
                     return reject(err);
                 }
-                return resolve(db);
+                self.database = db;
+                return resolve(self.database);
             });
         }
         return new Promise(resolver);
     }
 
-    getAll(db, filter, limit, offset) {
+    getAll(filter, limit, offset) {
         const parsedFilter = getItDotted(filter);
         const self = this;
 
         function resolver(resolve, reject) {
-            db.collection(self.collectionName)
-            .find(parsedFilter)
-            .limit(limit).skip(offset)
-            .toArray((er, result) => {
-                if (er) {
-                    console.error('an error occurred in getAll', er);
-                    reject(er);
-                }
-                db.collection(self.collectionName).count(parsedFilter, (err, count) => {
-                    if (err) {
-                        console.error('an error occurred in getAll', err);
-                        reject(err);
+            return self.getDatabase()
+            .then((db) => {
+                db.collection(self.collectionName)
+                .find(parsedFilter)
+                .limit(limit).skip(offset)
+                .toArray((er, result) => {
+                    if (er) {
+                        console.error('an error occurred in getAll', er);
+                        reject(er);
                     }
-                    resolve({ totalSize: count, content: result });
+                    db.collection(self.collectionName).count(parsedFilter, (err, count) => {
+                        if (err) {
+                            console.error('an error occurred in getAll', err);
+                            reject(err);
+                        }
+                        resolve({ totalSize: count, content: result });
+                    });
                 });
             });
         }
@@ -81,32 +85,35 @@ class MongoDbProvider {
         });
     }
 
-    getById(db, id) {
+    getById(id) {
         const self = this;
         function resolver(resolve, reject) {
-            db.collection(self.collectionName)
-            .findOne({ _id: new ObjectID(id) }, (err, doc) => {
-                if (err) {
-                    reject(err);
-                }
-                if (!doc) {
-                    return reject({ statusCode: 404 });
-                }
-                return resolve(transform(doc));
+            self.getDatabase().then((db) => {
+                db.collection(self.collectionName)
+                .findOne({ _id: new ObjectID(id) }, (err, doc) => {
+                    if (err) {
+                        reject(err);
+                    }
+                    if (!doc) {
+                        return reject({ statusCode: 404 });
+                    }
+                    return resolve(transform(doc));
+                });
             });
         }
 
         return new Promise(resolver);
     }
 
-    create(db, json) {
+    create(json) {
         const self = this;
         function resolver(resolve, reject) {
-            db.collection(self.collectionName).insertOne(json).then((result) => {
+            self.getDatabase()
+            .then((db) => db.collection(self.collectionName).insertOne(json).then((result) => {
                 console.log(`created an entry into the ${self.collectionName} collection with id:
                 ${result.insertedId}`);
                 resolve(result.insertedId);
-            })
+            }))
             .catch((err) => {
                 reject(err);
             });
@@ -115,17 +122,23 @@ class MongoDbProvider {
         return new Promise(resolver);
     }
 
-    remove(db, id) {
+    remove(id) {
         const self = this;
         function resolver(resolve, reject) {
-            db.collection(self.collectionName).remove({
-                _id: new ObjectID(id)
-            }, { single: true }, (err) => {
-                if (err) {
-                    return reject(err);
-                }
-                return resolve();
-            });
+            try {
+                self.getDatabase().then((db) => {
+                    db.collection(self.collectionName).remove({
+                        _id: new ObjectID(id)
+                    }, { single: true }, (err) => {
+                        if (err) {
+                            return reject(err);
+                        }
+                        return resolve();
+                    });
+                });
+            } catch (err) {
+                reject(err);
+            }
         }
 
         return new Promise(resolver);

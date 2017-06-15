@@ -19,8 +19,8 @@ describe('the MongoDbProvider module', () => {
     };
 
     test('remove calls collection with passed in collection name', () => {
-        const sut = new MongoDbProvider('foo');
-        return sut.remove(dbStub, '59172d619e43b10ebeb90e4b')
+        const sut = new MongoDbProvider(dbStub, 'foo');
+        return sut.remove('59172d619e43b10ebeb90e4b')
         .then(() => {
             expect(dbStub.collectionName).toEqual('foo');
         });
@@ -28,9 +28,8 @@ describe('the MongoDbProvider module', () => {
 
     test('remove calls remove on collection with id', () => {
         const id = '59172d619e43b10ebeb90e4b';
-        const sut = new MongoDbProvider('foo');
-        return sut.remove(dbStub, id)
-        .then(() => {
+        const sut = new MongoDbProvider(dbStub, 'foo');
+        sut.remove(id).then(() => {
             expect(dbStub.collectionStub.id).toEqual(new ObjectID(id));
         });
     });
