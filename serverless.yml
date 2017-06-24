@@ -1,0 +1,97 @@
+service: organizations
+
+package:
+  exclude:
+    - node_modules/**
+  include:
+    - node_modules/ajv/**
+    - node_modules/bson/**
+    - node_modules/co/**
+    - node_modules/mongodb/**
+    - node_modules/mongodb-core/**
+    - node_modules/ms/**
+    - node_modules/require_optional/**
+    - node_modules/resolve-from/**
+    - node_modules/semver/**
+    - node_modules/json-stable-stringify/**
+
+# You can pin your service to only deploy with a specific Serverless version
+# Check out our docs for more details
+# frameworkVersion: "=X.X.X"
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  profile: sls
+  stage: dev
+  region: eu-west-1
+  environment: # Service wide environment variables
+    MONGODB_CONNECTION_STRING: ${env:bizhub_api_mongodb_connectionstring_dev}
+
+functions:
+  getOrgs:
+    handler: src/handlers/handler-factory.get
+    events:
+      - http:
+          path: organizations
+          method: get
+          cors: true
+  
+  getOrgById:
+    handler: src/handlers/handler-factory.getById
+    events:
+      - http:
+          path: organizations/{id}
+          method: get
+          cors: true
+
+  createOrg:
+    handler: src/handlers/handler-factory.create
+    events:
+      - http:
+          path: organizations
+          method: post
+          cors: true
+
+  deleteOrg:
+    handler: src/handlers/handler-factory.remove
+    events:
+      - http:
+          path: organizations/{id}
+          method: delete
+          cors: true
+
+  createOffice:
+    handler: src/handlers/handler-factory.create
+    events:
+      - http:
+          path: offices
+          method: post
+          cors: true
+
+  getOffices:
+    handler: src/handlers/handler-factory.get
+    events:
+      - http:
+          path: offices
+          method: get
+          cors: true
+
+  createTimeEntry:
+    handler: src/handlers/handler-factory.create
+    events:
+      - http:
+          path: time-entries
+          method: post
+          cors: true
+  
+  getTimeEntries:
+    handler: src/handlers/handler-factory.get
+    events:
+      - http:
+          path: time-entries
+          method: get
+          cors: true
+
+plugins:
+  - serverless-offline

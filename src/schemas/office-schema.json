@@ -1,0 +1,43 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+        "addressLine1",
+        "townOrCity",
+        "country",
+        "postalCode",
+        "organization"
+    ],
+    "properties": {
+        "addressLine1": {
+            "type": "string"
+        },
+        "addressLine2": {
+            "type": "string"
+        },
+        "townOrCity": {
+            "type": "string"
+        },
+        "county": {
+            "type": "string"
+        },
+        "country": {
+            "type": "string"
+        },
+        "postalCode":{
+            "type": "string"
+        },
+        "organization": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

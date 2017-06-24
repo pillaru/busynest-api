@@ -1,0 +1,50 @@
+{
+    "type": "object",
+    "properties": {
+        "start": {
+            "type": "string",
+            "format": "date-time"
+        },
+        "end": {
+            "type": "string",
+            "format": "date-time"
+        },
+        "break": {
+            "type": "integer",
+            "default": 0,
+            "minimum": 0,
+            "maximum": 1440
+        },
+        "ratePerHour": {
+            "type": "number",
+            "minimum": 0,
+            "multipleOf": 0.01
+        },
+        "office": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "organization": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "id"
+            ],
+            "properties":{
+                "id":{
+                    "type":"string"
+                }
+            }
+        }
+    },
+    "required": [ "start", "end", "ratePerHour", "office" ],
+    "additionalProperties": false
+}
