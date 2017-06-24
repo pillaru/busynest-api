@@ -1,5 +1,5 @@
 const handler = require('./handler');
-const MongoDbProvider = require('../providers/mongodb-provider');
+const MongoDbProviderFactory = require('../providers/mongodb-provider-factory');
 
 const orgSchema = require('../schemas/organization-schema.json');
 const timeEntrySchema = require('../schemas/time-entry-schema.json');
@@ -13,6 +13,10 @@ const schemas = {
 };
 
 const cachedDb = null;
+
+function providerFactory() {
+    return new MongoDbProviderFactory(cachedDb);
+}
 
 function getCollectionName(resource) {
     const collectionNames = {
@@ -36,26 +40,26 @@ function create(event, context, callback) {
     const schema = getSchema(event.resource);
 
     const collectionName = getCollectionName(event.resource);
-    const provider = new MongoDbProvider(cachedDb, collectionName);
+    const provider = providerFactory(event.resource).create(collectionName);
 
     handler.create(jsonContents, provider, schema, context, callback);
 }
 
 function get(event, context, callback) {
     const collectionName = getCollectionName(event.resource);
-    const provider = new MongoDbProvider(cachedDb, collectionName);
+    const provider = providerFactory(event.resource).create(collectionName);
     handler.get(event, provider, querystringSchema, context, callback);
 }
 
 function getById(event, context, callback) {
     const collectionName = getCollectionName(event.resource);
-    const provider = new MongoDbProvider(cachedDb, collectionName);
+    const provider = providerFactory(event.resource).create(collectionName);
     handler.getById(event, provider, context, callback);
 }
 
 function remove(event, context, callback) {
     const collectionName = getCollectionName(event.resource);
-    const provider = new MongoDbProvider(cachedDb, collectionName);
+    const provider = providerFactory(event.resource).create(collectionName);
     handler.remove(event, provider, context, callback);
 }
 
