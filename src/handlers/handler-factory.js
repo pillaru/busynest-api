@@ -1,6 +1,6 @@
 const handler = require('./handler');
 const MongoDbProviderFactory = require('../providers/mongodb-provider-factory');
-
+const Auth0ApiServiceProviderFactory = require('../providers/auth0-api-service-provider-factory');
 const orgSchema = require('../schemas/organization-schema.json');
 const timeEntrySchema = require('../schemas/time-entry-schema.json');
 const officeSchema = require('../schemas/office-schema.json');
@@ -14,7 +14,10 @@ const schemas = {
 
 const cachedDb = null;
 
-function providerFactory() {
+function providerFactory(resource) {
+    if (resource === '/users') {
+        return new Auth0ApiServiceProviderFactory();
+    }
     return new MongoDbProviderFactory(cachedDb);
 }
 
@@ -25,7 +28,8 @@ function getCollectionName(resource) {
         '/organizations': 'organizations',
         '/organizations/{id}': 'organizations',
         '/offices': 'offices',
-        '/offices/{id}': 'offices'
+        '/offices/{id}': 'offices',
+        '/users': 'users'
     };
     return collectionNames[resource];
 }
