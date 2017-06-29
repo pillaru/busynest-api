@@ -40,7 +40,12 @@ function getSchema(resource) {
 
 function create(event, context, callback) {
     const jsonContents = JSON.parse(event.body);
-
+    if (event.requestContext.authorizer && event.requestContext.authorizer.principalId) {
+        // assign principal id to owner
+        Object.assign(jsonContents, {
+            owner: { id: event.requestContext.authorizer.principalId }
+        });
+    }
     const schema = getSchema(event.resource);
 
     const collectionName = getCollectionName(event.resource);

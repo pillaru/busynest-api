@@ -27,10 +27,10 @@ provider:
   region: eu-west-1
   environment: # Service wide environment variables
     MONGODB_CONNECTION_STRING: ${env:bizhub_api_mongodb_connectionstring_dev}
-    AUTH0_CLIENT_ID: ${env:bizhub_api_auth0_client_id_dev}
-    AUTH0_CLIENT_SECRET: ${env:bizhub_api_auth0_client_secret_dev}
 
 functions:
+  authorizerFn:
+    handler: src/handlers/authorizer.authorize
   getOrgs:
     handler: src/handlers/handler-factory.get
     events:
@@ -85,6 +85,7 @@ functions:
       - http:
           path: time-entries
           method: post
+          authorizer: authorizerFn
           cors: true
   
   getTimeEntries:
