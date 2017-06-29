@@ -96,13 +96,5 @@ functions:
           method: get
           cors: true
 
-  getUsers:
-    handler: src/handlers/handler-factory.get
-    events:
-      - http:
-          path: users
-          method: get
-          cors: true
-
 plugins:
   - serverless-offline
