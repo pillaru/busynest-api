@@ -29,6 +29,8 @@ provider:
     MONGODB_CONNECTION_STRING: ${env:bizhub_api_mongodb_connectionstring_dev}
 
 functions:
+  authorizerFn:
+    handler: src/handlers/authorizer.authorize
   getOrgs:
     handler: src/handlers/handler-factory.get
     events:
@@ -83,6 +85,7 @@ functions:
       - http:
           path: time-entries
           method: post
+          authorizer: authorizerFn
           cors: true
   
   getTimeEntries:

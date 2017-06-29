@@ -20,6 +20,8 @@
   "homepage": "https://github.com/chekkan/bizhub-api#readme",
   "dependencies": {
     "ajv": "^5.0.1",
+    "jsonwebtoken": "^7.4.1",
+    "jwks-rsa": "^1.2.0",
     "mongodb": "^2.2.5"
   },
   "devDependencies": {

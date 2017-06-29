@@ -1,6 +1,6 @@
 const handler = require('./handler');
-const MongoDbProvider = require('../providers/mongodb-provider');
-
+const MongoDbProviderFactory = require('../providers/mongodb-provider-factory');
+const Auth0ApiServiceProviderFactory = require('../providers/auth0-api-service-provider-factory');
 const orgSchema = require('../schemas/organization-schema.json');
 const timeEntrySchema = require('../schemas/time-entry-schema.json');
 const officeSchema = require('../schemas/office-schema.json');
@@ -14,6 +14,13 @@ const schemas = {
 
 const cachedDb = null;
 
+function providerFactory(resource) {
+    if (resource === '/users') {
+        return new Auth0ApiServiceProviderFactory();
+    }
+    return new MongoDbProviderFactory(cachedDb);
+}
+
 function getCollectionName(resource) {
     const collectionNames = {
         '/time-entries': 'time-entries',
@@ -21,7 +28,8 @@ function getCollectionName(resource) {
         '/organizations': 'organizations',
         '/organizations/{id}': 'organizations',
         '/offices': 'offices',
-        '/offices/{id}': 'offices'
+        '/offices/{id}': 'offices',
+        '/users': 'users'
     };
     return collectionNames[resource];
 }
@@ -32,30 +40,35 @@ function getSchema(resource) {
 
 function create(event, context, callback) {
     const jsonContents = JSON.parse(event.body);
-
+    if (event.requestContext.authorizer && event.requestContext.authorizer.principalId) {
+        // assign principal id to owner
+        Object.assign(jsonContents, {
+            owner: { id: event.requestContext.authorizer.principalId }
+        });
+    }
     const schema = getSchema(event.resource);
 
     const collectionName = getCollectionName(event.resource);
-    const provider = new MongoDbProvider(cachedDb, collectionName);
+    const provider = providerFactory(event.resource).create(collectionName);
 
     handler.create(jsonContents, provider, schema, context, callback);
 }
 
 function get(event, context, callback) {
     const collectionName = getCollectionName(event.resource);
-    const provider = new MongoDbProvider(cachedDb, collectionName);
+    const provider = providerFactory(event.resource).create(collectionName);
     handler.get(event, provider, querystringSchema, context, callback);
 }
 
 function getById(event, context, callback) {
     const collectionName = getCollectionName(event.resource);
-    const provider = new MongoDbProvider(cachedDb, collectionName);
+    const provider = providerFactory(event.resource).create(collectionName);
     handler.getById(event, provider, context, callback);
 }
 
 function remove(event, context, callback) {
     const collectionName = getCollectionName(event.resource);
-    const provider = new MongoDbProvider(cachedDb, collectionName);
+    const provider = providerFactory(event.resource).create(collectionName);
     handler.remove(event, provider, context, callback);
 }
 

@@ -43,8 +43,20 @@
                     "type":"string"
                 }
             }
+        },
+        "owner": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "id"
+            ],
+            "properties":{
+                "id":{
+                    "type":"string"
+                }
+            }
         }
     },
-    "required": [ "start", "end", "ratePerHour", "office" ],
+    "required": [ "start", "end", "ratePerHour", "office" , "owner"],
     "additionalProperties": false
 }
