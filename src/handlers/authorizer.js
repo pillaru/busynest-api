@@ -14,6 +14,14 @@ const logError = (err) => {
     Raven.captureException(err);
 };
 
+const resources = [
+    'GET/time-entries',
+    'POST/time-entries',
+    'POST/organizations',
+    'DELETE/organizations/{id}',
+    'POST/offices'
+];
+
 // Policy helper function
 const generatePolicy = (principalId, effect, resource) => {
     const authResponse = {
@@ -29,7 +37,11 @@ const generatePolicy = (principalId, effect, resource) => {
         const statementOne = {};
         statementOne.Action = 'execute-api:Invoke';
         statementOne.Effect = effect;
-        statementOne.Resource = resource;
+        statementOne.Resource = resources.map((r) => {
+            const tokens = resource.split('/', 3);
+            tokens[2] = r;
+            return tokens.join('/');
+        });
         policyDocument.Statement[0] = statementOne;
         authResponse.policyDocument = policyDocument;
     }
@@ -69,7 +81,9 @@ function authorize(event, context, cb) {
                         logError(error);
                         cb('Unauthorized');
                     } else {
-                        cb(null, generatePolicy(decoded.sub, 'Allow', event.methodArn));
+                        const response = generatePolicy(decoded.sub, 'Allow', event.methodArn);
+                        console.log(response.policyDocument.Statement);
+                        cb(null, response);
                     }
                 });
             }
