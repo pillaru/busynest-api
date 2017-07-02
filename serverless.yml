@@ -53,6 +53,7 @@ functions:
       - http:
           path: organizations
           method: post
+          authorizer: authorizerFn
           cors: true
 
   deleteOrg:
@@ -61,6 +62,7 @@ functions:
       - http:
           path: organizations/{id}
           method: delete
+          authorizer: authorizerFn
           cors: true
 
   createOffice:
@@ -69,6 +71,7 @@ functions:
       - http:
           path: offices
           method: post
+          authorizer: authorizerFn
           cors: true
 
   getOffices:
