@@ -9,9 +9,11 @@ const JWKS_URI = 'https://bizhub.eu.auth0.com/.well-known/jwks.json';
 
 Raven.config(process.env.SENTRY_DSN).install();
 
-const logError = (err) => {
+const logError = (err, capture = true) => {
     console.log(err);
-    Raven.captureException(err);
+    if (capture) {
+        Raven.captureException(err);
+    }
 };
 
 const resources = [
@@ -78,7 +80,7 @@ function authorize(event, context, cb) {
                 };
                 jwt.verify(token, signingKey, options, (error, decoded) => {
                     if (error) {
-                        logError(error);
+                        logError(error, false);
                         cb('Unauthorized');
                     } else {
                         const response = generatePolicy(decoded.sub, 'Allow', event.methodArn);
