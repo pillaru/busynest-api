@@ -40,9 +40,9 @@ function authorize(event, context, cb) {
             jwksUri: JWKS_URI
         });
         const kid = jwt.decode(token, { complete: true }).header.kid;
-        console.log(kid);
         client.getSigningKey(kid, (err, key) => {
             if (err) {
+                console.log(err);
                 cb('Unauthorized');
             } else {
                 const signingKey = key.publicKey || key.rsaPublicKey;
@@ -53,6 +53,7 @@ function authorize(event, context, cb) {
                 };
                 jwt.verify(token, signingKey, options, (error, decoded) => {
                     if (error) {
+                        console.log(error);
                         cb('Unauthorized');
                     } else {
                         cb(null, generatePolicy(decoded.sub, 'Allow', event.methodArn));
