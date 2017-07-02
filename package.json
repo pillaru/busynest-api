@@ -25,6 +25,7 @@
     "mongodb": "^2.2.5"
   },
   "devDependencies": {
+    "codacy-coverage": "^2.0.2",
     "coveralls": "^2.13.1",
     "eslint": "^3.3.0",
     "eslint-config-airbnb": "^10.0.1",
