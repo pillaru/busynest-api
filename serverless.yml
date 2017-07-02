@@ -31,6 +31,8 @@ provider:
 functions:
   authorizerFn:
     handler: src/handlers/authorizer.authorize
+    environment:
+      SENTRY_DSN: ${env:bizhub_api_sentry_dsn_dev}
   getOrgs:
     handler: src/handlers/handler-factory.get
     events:

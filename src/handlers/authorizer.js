@@ -1,10 +1,18 @@
 const jwksClient = require('jwks-rsa');
 const jwt = require('jsonwebtoken');
+const Raven = require('raven');
 
 const AUDIENCE = 'https://bizhub-api/';
 const ISSUER = ['https://bizhub.eu.auth0.com/'];
 const algorithms = ['RS256'];
 const JWKS_URI = 'https://bizhub.eu.auth0.com/.well-known/jwks.json';
+
+Raven.config(process.env.SENTRY_DSN).install();
+
+const logError = (err) => {
+    console.log(err);
+    Raven.captureException(err);
+};
 
 // Policy helper function
 const generatePolicy = (principalId, effect, resource) => {
@@ -39,10 +47,15 @@ function authorize(event, context, cb) {
             jwksRequestsPerMinute: 10, // Default value
             jwksUri: JWKS_URI
         });
-        const kid = jwt.decode(token, { complete: true }).header.kid;
+        const decodedToken = jwt.decode(token, { complete: true });
+        if (!decodedToken) {
+            cb('Unauthorized');
+            return;
+        }
+        const kid = decodedToken.header.kid;
         client.getSigningKey(kid, (err, key) => {
             if (err) {
-                console.log(err);
+                logError(err);
                 cb('Unauthorized');
             } else {
                 const signingKey = key.publicKey || key.rsaPublicKey;
@@ -53,7 +66,7 @@ function authorize(event, context, cb) {
                 };
                 jwt.verify(token, signingKey, options, (error, decoded) => {
                     if (error) {
-                        console.log(error);
+                        logError(error);
                         cb('Unauthorized');
                     } else {
                         cb(null, generatePolicy(decoded.sub, 'Allow', event.methodArn));
@@ -67,5 +80,12 @@ function authorize(event, context, cb) {
 }
 
 module.exports = {
-    authorize
+    authorize: (event, context, cb) => {
+        try {
+            authorize(event, context, cb);
+        } catch (e) {
+            Raven.captureException(e);
+            throw e;
+        }
+    }
 };
