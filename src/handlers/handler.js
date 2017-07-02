@@ -20,14 +20,12 @@ function create(body, provider, schema, context, callback) {
     .catch(helper.handleUnhandledError(callback));
 }
 
-function get(event, provider, queryStringSchema, context, callback) {
+function get(qs, provider, queryStringSchema, context, callback) {
     Object.assign(context, { callbackWaitsForEmptyEventLoop: false });
-
-    const qs = event.queryStringParameters || { };
-    qs.limit = isNaN(Number(qs.limit)) ? undefined : Number(qs.limit);
-    qs.offset = isNaN(Number(qs.offset)) ? undefined : Number(qs.offset);
-
-    qs.filter = helper.parseFilter(qs);
+    Object.assign(qs, {
+        limit: isNaN(Number(qs.limit)) ? undefined : Number(qs.limit),
+        offset: isNaN(Number(qs.offset)) ? undefined : Number(qs.offset)
+    });
 
     const ajv = new Ajv({ useDefaults: true });
     const validationResult = helper.validateSchema(ajv, queryStringSchema, qs);

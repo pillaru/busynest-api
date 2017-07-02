@@ -12,37 +12,6 @@ function validateSchema(ajv, schema, content) {
     return { isValid: true };
 }
 
-function assign(obj, keyPath, value) {
-    const lastKeyIndex = keyPath.length - 1;
-    for (let i = 0; i < lastKeyIndex; ++i) {
-        const key = keyPath[i];
-        if (!(key in obj)) {
-            Object.assign(obj, { [key]: {} });
-        }
-        obj = obj[key];
-    }
-    obj[keyPath[lastKeyIndex]] = value;
-}
-
-function parseFilter(querystring) {
-    let filters = Object.keys(querystring).filter((key) => key.startsWith('filter['));
-    filters = filters.map((key) => {
-        const splitted = key.split(new RegExp(['\\[', '\\]', ' '].join('|'), 'g'))
-            .filter((k) => k !== '').splice(1);
-        // return splitted.reduce((o, s) => o[s] = {}, {});
-        const filter = {};
-        assign(filter, splitted, querystring[key]);
-        return filter;
-    });
-
-    const result = {};
-    for (let i = 0; i < filters.length; i++) {
-        const key = Object.keys(filters[i])[0];
-        result[key] = filters[i][key];
-    }
-    return result;
-}
-
 function badRequest(context, errors) {
     return {
         statusCode: 400,
@@ -123,6 +92,5 @@ module.exports = {
     handleNoContent,
     handleError,
     handleUnhandledError,
-    validateSchema,
-    parseFilter
+    validateSchema
 };

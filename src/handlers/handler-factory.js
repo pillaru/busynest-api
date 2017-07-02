@@ -5,6 +5,7 @@ const orgSchema = require('../schemas/organization-schema.json');
 const timeEntrySchema = require('../schemas/time-entry-schema.json');
 const officeSchema = require('../schemas/office-schema.json');
 const querystringSchema = require('../schemas/querystring-schema.json');
+const filterProvider = require('../providers/filter-provider');
 
 const schemas = {
     '/time-entries': timeEntrySchema,
@@ -57,7 +58,12 @@ function create(event, context, callback) {
 function get(event, context, callback) {
     const collectionName = getCollectionName(event.resource);
     const provider = providerFactory(event.resource).create(collectionName);
-    handler.get(event, provider, querystringSchema, context, callback);
+    const qs = event.queryStringParameters || { };
+    const filter = filterProvider(qs, event.resource, event.requestContext.authorizer);
+    Object.assign(qs, {
+        filter
+    });
+    handler.get(qs, provider, querystringSchema, context, callback);
 }
 
 function getById(event, context, callback) {

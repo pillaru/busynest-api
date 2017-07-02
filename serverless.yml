@@ -94,6 +94,7 @@ functions:
       - http:
           path: time-entries
           method: get
+          authorizer: authorizerFn
           cors: true
 
 plugins:
