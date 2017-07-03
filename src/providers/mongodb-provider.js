@@ -17,7 +17,12 @@ function getItDotted(obj) {
             if (value && typeof value === 'object') {
                 recurse(value, newKey);  // it's a nested object, so do it again
             } else {
-                res[newKey] = value;  // it's not an object, so set the property
+                const arrayValue = value.split(',');
+                if (arrayValue.length > 1) {
+                    res[newKey] = arrayValue;
+                } else {
+                    res[newKey] = value;
+                }
             }
         }
     }(obj));
@@ -53,6 +58,16 @@ class MongoDbProvider {
 
     getAll(filter, limit, offset) {
         const parsedFilter = getItDotted(filter);
+        if (parsedFilter.id) {
+            if (Array.isArray(parsedFilter.id)) {
+                parsedFilter.id = { $in: parsedFilter.id.map(o => new ObjectID(o)) };
+            } else {
+                parsedFilter.id = new ObjectID(parsedFilter.id);
+            }
+            Object.defineProperty(parsedFilter, '_id', Object.getOwnPropertyDescriptor(parsedFilter, 'id'));
+            delete parsedFilter.id;
+        }
+        console.log(parsedFilter);
         const self = this;
 
         function resolver(resolve, reject) {

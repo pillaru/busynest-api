@@ -40,6 +40,7 @@ function appendAuthFilters(existingFilters, resource, auth) {
     if (auth && auth.principalId) {
         const filter = getFilterForResource(resource, auth.principalId);
         Object.assign(existingFilters, filter);
+        console.log(existingFilters);
     }
     return existingFilters;
 }
