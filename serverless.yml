@@ -102,5 +102,22 @@ functions:
           authorizer: authorizerFn
           cors: true
 
+  createInvoice:
+    handler: src/handlers/handler-factory.create
+    events:
+      - http:
+          path: invoices
+          method: post
+          authorizer: authorizerFn
+          cors: true
+  getInvoices:
+    handler: src/handlers/handler-factory.get
+    events:
+      - http:
+          path: invoices
+          method: get
+          authorizer: authorizerFn
+          cors: true
+
 plugins:
   - serverless-offline

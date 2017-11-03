@@ -1,0 +1,63 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+        "date",
+        "timeEntries",
+        "recipient"
+    ],
+    "properties": {
+        "date": {
+            "type": "string",
+            "format": "date"
+        },
+        "timeEntries": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "required": [
+                    "id"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "recipient": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "organization",
+                "office"
+            ],
+            "properties": {
+                "organization": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                        "id"
+                    ],
+                    "properties": {
+                        "id": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "office": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                        "id"
+                    ],
+                    "properties": {
+                        "id": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

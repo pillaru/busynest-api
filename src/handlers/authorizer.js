@@ -21,7 +21,9 @@ const resources = [
     'POST/time-entries',
     'POST/organizations',
     'DELETE/organizations/{id}',
-    'POST/offices'
+    'POST/offices',
+    'POST/invoices',
+    'GET/invoices'
 ];
 
 // Policy helper function
