@@ -4,13 +4,15 @@ const Auth0ApiServiceProviderFactory = require('../providers/auth0-api-service-p
 const orgSchema = require('../schemas/organization-schema.json');
 const timeEntrySchema = require('../schemas/time-entry-schema.json');
 const officeSchema = require('../schemas/office-schema.json');
+const invoiceSchema = require('../schemas/invoice-schema.json');
 const querystringSchema = require('../schemas/querystring-schema.json');
 const filterProvider = require('../providers/filter-provider');
 
 const schemas = {
     '/time-entries': timeEntrySchema,
     '/organizations': orgSchema,
-    '/offices': officeSchema
+    '/offices': officeSchema,
+    '/invoices': invoiceSchema
 };
 
 const cachedDb = null;
@@ -30,7 +32,8 @@ function getCollectionName(resource) {
         '/organizations/{id}': 'organizations',
         '/offices': 'offices',
         '/offices/{id}': 'offices',
-        '/users': 'users'
+        '/users': 'users',
+        '/invoices': 'invoices'
     };
     return collectionNames[resource];
 }
