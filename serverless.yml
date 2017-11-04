@@ -22,7 +22,6 @@ package:
 provider:
   name: aws
   runtime: nodejs6.10
-  profile: sls
   stage: dev
   region: eu-west-1
   environment: # Service wide environment variables
