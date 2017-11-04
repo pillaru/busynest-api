@@ -1,20 +1,5 @@
 service: organizations
 
-package:
-  exclude:
-    - node_modules/**
-  include:
-    - node_modules/ajv/**
-    - node_modules/bson/**
-    - node_modules/co/**
-    - node_modules/mongodb/**
-    - node_modules/mongodb-core/**
-    - node_modules/ms/**
-    - node_modules/require_optional/**
-    - node_modules/resolve-from/**
-    - node_modules/semver/**
-    - node_modules/json-stable-stringify/**
-
 # You can pin your service to only deploy with a specific Serverless version
 # Check out our docs for more details
 # frameworkVersion: "=X.X.X"
