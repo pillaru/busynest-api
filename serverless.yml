@@ -102,6 +102,13 @@ functions:
           method: get
           authorizer: authorizerFn
           cors: true
+  getInvoiceById:
+    handler: src/handlers/handler-factory.getById
+    events:
+      - http:
+          path: invoices/{id}
+          method: get
+          cors: true
 
 plugins:
   - serverless-offline

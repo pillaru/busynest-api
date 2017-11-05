@@ -23,7 +23,8 @@ const resources = [
     'DELETE/organizations/{id}',
     'POST/offices',
     'POST/invoices',
-    'GET/invoices'
+    'GET/invoices',
+    'GET/invoices/{id}'
 ];
 
 // Policy helper function
