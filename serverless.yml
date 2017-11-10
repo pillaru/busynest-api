@@ -67,6 +67,14 @@ functions:
           path: offices
           method: get
           cors: true
+  
+  getOfficeById:
+    handler: src/handlers/handler-factory.getById
+    events:
+      - http:
+          path: offices/{id}
+          method: get
+          cors: true
 
   createTimeEntry:
     handler: src/handlers/handler-factory.create
