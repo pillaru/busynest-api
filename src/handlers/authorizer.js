@@ -2,10 +2,10 @@ const jwksClient = require('jwks-rsa');
 const jwt = require('jsonwebtoken');
 const Raven = require('raven');
 
-const AUDIENCE = 'https://bizhub-api/';
-const ISSUER = ['https://bizhub.eu.auth0.com/'];
+const AUDIENCE = 'https://busynest-api/';
+const ISSUER = ['https://busynest.eu.auth0.com/'];
 const algorithms = ['RS256'];
-const JWKS_URI = 'https://bizhub.eu.auth0.com/.well-known/jwks.json';
+const JWKS_URI = 'https://busynest.eu.auth0.com/.well-known/jwks.json';
 
 Raven.config(process.env.SENTRY_DSN).install();
 
