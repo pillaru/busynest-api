@@ -3,6 +3,18 @@
     "properties": {
         "name": {
             "type": "string"
+        },
+        "owner": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "id"
+            ],
+            "properties":{
+                "id":{
+                    "type":"string"
+                }
+            }
         }
     },
     "required": [ "name" ],
