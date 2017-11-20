@@ -24,7 +24,8 @@ const resources = [
     'POST/offices',
     'POST/invoices',
     'GET/invoices',
-    'GET/invoices/{id}'
+    'GET/invoices/{id}',
+    'GET/me/organizations'
 ];
 
 // Policy helper function

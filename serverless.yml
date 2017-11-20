@@ -117,6 +117,13 @@ functions:
           path: invoices/{id}
           method: get
           cors: true
+  getMyOrgs:
+    handler: src/handlers/handler-factory.get
+    events:
+      - http:
+          path: me/organizations
+          method: get
+          cors: true
 
 plugins:
   - serverless-offline

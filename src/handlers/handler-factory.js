@@ -34,7 +34,8 @@ function getCollectionName(resource) {
         '/offices/{id}': 'offices',
         '/users': 'users',
         '/invoices': 'invoices',
-        '/invoices/{id}': 'invoices'
+        '/invoices/{id}': 'invoices',
+        '/me/organizations': 'organizations'
     };
     return collectionNames[resource];
 }
