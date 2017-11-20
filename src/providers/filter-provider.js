@@ -33,6 +33,9 @@ function getFilterForResource(resource, userId) {
     if (resource === '/time-entries') {
         return { owner: { id: userId } };
     }
+    if (resource === '/invoices') {
+        return { owner: { id: userId } };
+    }
     return {};
 }
 
