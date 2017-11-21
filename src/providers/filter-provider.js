@@ -36,7 +36,7 @@ function getFilterForResource(resource, userId) {
     if (resource === '/invoices') {
         return { owner: { id: userId } };
     }
-    if (resource === 'me/organizations') {
+    if (resource === '/me/organizations') {
         return { owner: { id: userId } };
     }
     return {};
