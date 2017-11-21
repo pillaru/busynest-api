@@ -123,6 +123,7 @@ functions:
       - http:
           path: me/organizations
           method: get
+          authorizer: authorizerFn
           cors: true
 
 plugins:
