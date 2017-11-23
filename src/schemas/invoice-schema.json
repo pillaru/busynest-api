@@ -3,58 +3,65 @@
     "additionalProperties": false,
     "required": [
         "date",
-        "timeEntries",
-        "recipient"
+        "organization",
+        "recipient",
+        "items"
     ],
     "properties": {
         "date": {
             "type": "string",
             "format": "date"
         },
-        "timeEntries": {
-            "type": "array",
-            "items": {
-                "type": "object",
-                "required": [
-                    "id"
-                ],
-                "properties": {
-                    "id": {
-                        "type": "string"
-                    }
+        "organization": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string"
                 }
             }
         },
         "recipient": {
             "type": "object",
-            "additionalProperties": false,
             "required": [
-                "organization",
-                "office"
+                "name",
+                "address"
             ],
             "properties": {
-                "organization": {
-                    "type": "object",
-                    "additionalProperties": false,
-                    "required": [
-                        "id"
-                    ],
-                    "properties": {
-                        "id": {
-                            "type": "string"
-                        }
-                    }
+                "name": {
+                    "type": "string"
                 },
-                "office": {
-                    "type": "object",
-                    "additionalProperties": false,
-                    "required": [
-                        "id"
-                    ],
-                    "properties": {
-                        "id": {
-                            "type": "string"
-                        }
+                "address": {
+                    "type": "string"
+                }
+            }
+        },
+        "items": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+                "type": "object",
+                "required": [
+                    "date",
+                    "billableHours",
+                    "totalAmount",
+                    "client"
+                ],
+                "properties": {
+                    "date": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "billableHours": {
+                        "type": "number"
+                    },
+                    "totalHours": {
+                        "type": "number"
+                    },
+                    "client": {
+                        "type": "string"
                     }
                 }
             }
