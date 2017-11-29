@@ -18,7 +18,7 @@ function badRequest(context, errors) {
         headers: {
             'Access-Control-Allow-Origin': '*',
             // Required for cookies, authorization headers with HTTPS
-            'Access-Control-Allow-Credentials' : true
+            'Access-Control-Allow-Credentials': true
         },
         body: JSON.stringify({
             message: 'Validation failed',
@@ -35,19 +35,22 @@ function handleOk(callback) {
             // Required for CORS support to work
             'Access-Control-Allow-Origin': '*',
             // Required for cookies, authorization headers with HTTPS
-            'Access-Control-Allow-Credentials' : true
+            'Access-Control-Allow-Credentials': true
         },
         body: JSON.stringify(body)
     });
 }
 
 function handleCreated(callback) {
-    return () => callback(null, {
+    return (id) => callback(null, {
         statusCode: 201,
         headers: {
             'Access-Control-Allow-Origin': '*',
             // Required for cookies, authorization headers with HTTPS
-            'Access-Control-Allow-Credentials' : true
+            'access-control-allow-credentials': true,
+            'access-control-allow-headers': 'Location',
+            'access-control-expose-headers': 'Location',
+            Location: id
         }
     });
 }
@@ -58,7 +61,7 @@ function handleNoContent(callback) {
         headers: {
             'Access-Control-Allow-Origin': '*',
             // Required for cookies, authorization headers with HTTPS
-            'Access-Control-Allow-Credentials' : true
+            'Access-Control-Allow-Credentials': true
         }
     });
 }
@@ -71,7 +74,7 @@ function handleUnhandledError(callback) {
             headers: {
                 'Access-Control-Allow-Origin': '*',
                 // Required for cookies, authorization headers with HTTPS
-                'Access-Control-Allow-Credentials' : true
+                'Access-Control-Allow-Credentials': true
             }
         });
     };
@@ -83,7 +86,7 @@ function handleNotFound(callback) {
         headers: {
             'Access-Control-Allow-Origin': '*',
             // Required for cookies, authorization headers with HTTPS
-            'Access-Control-Allow-Credentials' : true
+            'Access-Control-Allow-Credentials': true
         }
     });
 }
