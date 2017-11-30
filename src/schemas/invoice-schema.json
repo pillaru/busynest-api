@@ -4,6 +4,7 @@
     "required": [
         "date",
         "organization",
+        "from",
         "recipient",
         "items"
     ],
@@ -19,6 +20,20 @@
             ],
             "properties": {
                 "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "from": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "address": {
                     "type": "string"
                 }
             }
