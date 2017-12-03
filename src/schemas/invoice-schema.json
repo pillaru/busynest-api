@@ -81,13 +81,37 @@
                 }
             }
         },
+        "payment": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "name",
+                "bank",
+                "sortCode",
+                "accountNumber"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "bank": {
+                    "type": "string"
+                },
+                "sortCode": {
+                    "type": "string"
+                },
+                "accountNumber": {
+                    "type": "string"
+                }
+            }
+        },
         "owner": {
             "type": "object",
             "additionalProperties": false,
             "required": [
                 "id"
             ],
-            "properties":{
+            "properties": {
                 "id":{
                     "type":"string"
                 }
