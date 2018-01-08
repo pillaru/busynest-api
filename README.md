@@ -1,4 +1,4 @@
-# bizhub-api
+# bizhub-api [![dependencies Status](https://david-dm.org/pillaru/busynest-api/status.svg)](https://david-dm.org/pillaru/busynest-api) [![devDependencies Status](https://david-dm.org/pillaru/busynest-api/dev-status.svg)](https://david-dm.org/pillaru/busynest-api?type=dev)
 
 Create an `.env` file with the following environment variables
 ```
