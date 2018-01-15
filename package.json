@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "lint": "eslint src tests",
-    "test": "jest tests --coverage",
+    "test": "jest tests/**/* --coverage",
     "deploy": "serverless deploy"
   },
   "repository": {
@@ -32,7 +32,7 @@
     "eslint-plugin-import": "^1.13.0",
     "eslint-plugin-jsx-a11y": "^2.1.0",
     "eslint-plugin-react": "^6.1.0",
-    "jest": "^20.0.4",
+    "jest": "^22.1.1",
     "serverless": "^1.24.0",
     "serverless-offline": "^3.16.0"
   },
