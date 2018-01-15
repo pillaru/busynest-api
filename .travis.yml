@@ -4,7 +4,6 @@ node_js:
 cache:
   directories:
     - node_modules
-# Send coverage data to Coveralls
 script: 
   - npm test && cat ./coverage/lcov.info | ./node_modules/.bin/codacy-coverage
 deploy:
