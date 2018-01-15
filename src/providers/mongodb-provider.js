@@ -29,6 +29,14 @@ function getItDotted(obj) {
     return res;
 }
 
+function getDbNameFromUri(uri) {
+    const index = uri.lastIndexOf('/');
+    if (index === -1) {
+        return null;
+    }
+    return uri.substring(index + 1);
+}
+
 class MongoDbProvider {
     constructor(database, collectionName) {
         this.database = database;
@@ -43,13 +51,15 @@ class MongoDbProvider {
             if (self.database != null) {
                 return resolve(self.database);
             }
-            console.log('=> connecting to database');
-            return MongoClient.connect(uri, (err, db) => {
+            const dbName = getDbNameFromUri(uri);
+            console.log('=> connecting to server');
+            return MongoClient.connect(uri, (err, client) => {
                 if (err) {
-                    console.error('error connecting to database', err);
+                    console.error('error connecting to server', err);
                     return reject(err);
                 }
-                self.database = db;
+                console.log(`=> database name ${dbName}`);
+                self.database = client.db(dbName);
                 return resolve(self.database);
             });
         }
