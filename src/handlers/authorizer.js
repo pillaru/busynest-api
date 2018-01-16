@@ -1,52 +1,46 @@
-const jwksClient = require('jwks-rsa');
-const jwt = require('jsonwebtoken');
-const Raven = require('raven');
+const jwksClient = require("jwks-rsa");
+const jwt = require("jsonwebtoken");
 
-const AUDIENCE = 'https://busynest-api/';
-const ISSUER = ['https://busynest.eu.auth0.com/'];
-const algorithms = ['RS256'];
-const JWKS_URI = 'https://busynest.eu.auth0.com/.well-known/jwks.json';
+const AUDIENCE = "https://busynest-api/";
+const ISSUER = ["https://busynest.eu.auth0.com/"];
+const algorithms = ["RS256"];
+const JWKS_URI = "https://busynest.eu.auth0.com/.well-known/jwks.json";
 
-Raven.config(process.env.SENTRY_DSN).install();
-
-const logError = (err, capture = true) => {
+const logError = (err) => {
     console.log(err);
-    if (capture) {
-        Raven.captureException(err);
-    }
 };
 
 const resources = [
-    'GET/time-entries',
-    'POST/time-entries',
-    'POST/organizations',
-    'DELETE/organizations/{id}',
-    'POST/offices',
-    'POST/invoices',
-    'GET/invoices',
-    'GET/invoices/{id}',
-    'GET/me/organizations'
+    "GET/time-entries",
+    "POST/time-entries",
+    "POST/organizations",
+    "DELETE/organizations/{id}",
+    "POST/offices",
+    "POST/invoices",
+    "GET/invoices",
+    "GET/invoices/{id}",
+    "GET/me/organizations"
 ];
 
 // Policy helper function
 const generatePolicy = (principalId, effect, resource) => {
     const authResponse = {
-        principalId: principalId.split('|')[1],
+        principalId: principalId.split("|")[1],
         // pass additional values here
         // available in $event.requestContext.authorizer.key
         context: { }
     };
     if (effect && resource) {
         const policyDocument = {};
-        policyDocument.Version = '2012-10-17';
+        policyDocument.Version = "2012-10-17";
         policyDocument.Statement = [];
         const statementOne = {};
-        statementOne.Action = 'execute-api:Invoke';
+        statementOne.Action = "execute-api:Invoke";
         statementOne.Effect = effect;
         statementOne.Resource = resources.map((r) => {
-            const tokens = resource.split('/', 3);
+            const tokens = resource.split("/", 3);
             tokens[2] = r;
-            return tokens.join('/');
+            return tokens.join("/");
         });
         policyDocument.Statement[0] = statementOne;
         authResponse.policyDocument = policyDocument;
@@ -67,14 +61,14 @@ function authorize(event, context, cb) {
         });
         const decodedToken = jwt.decode(token, { complete: true });
         if (!decodedToken) {
-            cb('Unauthorized');
+            cb("Unauthorized");
             return;
         }
         const { kid } = decodedToken.header;
         client.getSigningKey(kid, (err, key) => {
             if (err) {
                 logError(err);
-                cb('Unauthorized');
+                cb("Unauthorized");
             } else {
                 const signingKey = key.publicKey || key.rsaPublicKey;
                 const options = {
@@ -85,9 +79,9 @@ function authorize(event, context, cb) {
                 jwt.verify(token, signingKey, options, (error, decoded) => {
                     if (error) {
                         logError(error, false);
-                        cb('Unauthorized');
+                        cb("Unauthorized");
                     } else {
-                        const response = generatePolicy(decoded.sub, 'Allow', event.methodArn);
+                        const response = generatePolicy(decoded.sub, "Allow", event.methodArn);
                         console.log(response.policyDocument.Statement);
                         cb(null, response);
                     }
@@ -95,17 +89,10 @@ function authorize(event, context, cb) {
             }
         });
     } else {
-        cb('Unauthorized');
+        cb("Unauthorized");
     }
 }
 
 module.exports = {
-    authorize: (event, context, cb) => {
-        try {
-            authorize(event, context, cb);
-        } catch (e) {
-            Raven.captureException(e);
-            throw e;
-        }
-    }
+    authorize
 };
