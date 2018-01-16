@@ -70,7 +70,7 @@ function authorize(event, context, cb) {
             cb('Unauthorized');
             return;
         }
-        const kid = decodedToken.header.kid;
+        const { kid } = decodedToken.header;
         client.getSigningKey(kid, (err, key) => {
             if (err) {
                 logError(err);
