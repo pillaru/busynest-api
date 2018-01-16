@@ -12,6 +12,7 @@ module.exports = {
     "rules": {
         "indent": ["error", 4],
         "comma-dangle": ["error", "never"],
+        "quotes": ["error", "double"],
         "import/no-extraneous-dependencies": [
             "error", {
                 "devDependencies": true,
