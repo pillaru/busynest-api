@@ -1,8 +1,37 @@
+const headers = {
+    // Required for CORS support to work
+    "Access-Control-Allow-Origin": "*",
+    // Required for cookies, authorization headers with HTTPS
+    "Access-Control-Allow-Credentials": true
+};
+
+function extend(...args) {
+    // Create a new object
+    const extended = {};
+
+    // Merge the object into the extended object
+    function merge(obj) {
+        Object.keys(obj)
+            .filter(prop => Object.prototype.hasOwnProperty.call(obj, prop))
+            .forEach((prop) => {
+                // Push each value from `obj` into `extended`
+                extended[prop] = obj[prop];
+            });
+    }
+
+    // Loop through each object and conduct a merge
+    args.forEach((arg) => {
+        merge(arg);
+    });
+
+    return extended;
+}
+
 function validateSchema(ajv, schema, content) {
     ajv.validate(schema, content);
     if (ajv.errors && ajv.errors.length > 0) {
         console.log(ajv.errors);
-        const errors = ajv.errors.map((error) => ({
+        const errors = ajv.errors.map(error => ({
             message: error.message,
             path: error.dataPath,
             params: error.params
@@ -15,13 +44,9 @@ function validateSchema(ajv, schema, content) {
 function badRequest(context, errors) {
     return {
         statusCode: 400,
-        headers: {
-            'Access-Control-Allow-Origin': '*',
-            // Required for cookies, authorization headers with HTTPS
-            'Access-Control-Allow-Credentials': true
-        },
+        headers,
         body: JSON.stringify({
-            message: 'Validation failed',
+            message: "Validation failed",
             requestId: context.awsRequestId,
             errors
         })
@@ -29,40 +54,28 @@ function badRequest(context, errors) {
 }
 
 function handleOk(callback) {
-    return (body) => callback(null, {
+    return body => callback(null, {
         statusCode: 200,
-        headers: {
-            // Required for CORS support to work
-            'Access-Control-Allow-Origin': '*',
-            // Required for cookies, authorization headers with HTTPS
-            'Access-Control-Allow-Credentials': true
-        },
+        headers,
         body: JSON.stringify(body)
     });
 }
 
 function handleCreated(callback) {
-    return (id) => callback(null, {
+    return id => callback(null, {
         statusCode: 201,
-        headers: {
-            'Access-Control-Allow-Origin': '*',
-            // Required for cookies, authorization headers with HTTPS
-            'access-control-allow-credentials': true,
-            'access-control-allow-headers': 'Location',
-            'access-control-expose-headers': 'Location',
+        headers: extend(headers, {
+            "access-control-allow-headers": "Location",
+            "access-control-expose-headers": "Location",
             Location: id
-        }
+        })
     });
 }
 
 function handleNoContent(callback) {
     return () => callback(null, {
         statusCode: 204, // No-Content
-        headers: {
-            'Access-Control-Allow-Origin': '*',
-            // Required for cookies, authorization headers with HTTPS
-            'Access-Control-Allow-Credentials': true
-        }
+        headers
     });
 }
 
@@ -71,11 +84,7 @@ function handleUnhandledError(callback) {
         console.error(reason);
         return callback(reason, {
             statusCode: 500,
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-                // Required for cookies, authorization headers with HTTPS
-                'Access-Control-Allow-Credentials': true
-            }
+            headers
         });
     };
 }
@@ -83,11 +92,7 @@ function handleUnhandledError(callback) {
 function handleNotFound(callback) {
     return () => callback(null, {
         statusCode: 404,
-        headers: {
-            'Access-Control-Allow-Origin': '*',
-            // Required for cookies, authorization headers with HTTPS
-            'Access-Control-Allow-Credentials': true
-        }
+        headers
     });
 }
 
@@ -100,12 +105,20 @@ function handleError(callback) {
     };
 }
 
+function handleForbidden(callback) {
+    return () => callback(null, {
+        statusCode: 403,
+        headers
+    });
+}
+
 module.exports = {
     badRequest,
     handleOk,
     handleCreated,
     handleNoContent,
     handleError,
+    handleForbidden,
     handleUnhandledError,
     validateSchema
 };
