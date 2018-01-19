@@ -1,24 +1,24 @@
-const handler = require('./handler');
-const MongoDbProviderFactory = require('../providers/mongodb-provider-factory');
-const Auth0ApiServiceProviderFactory = require('../providers/auth0-api-service-provider-factory');
-const orgSchema = require('../schemas/organization-schema.json');
-const timeEntrySchema = require('../schemas/time-entry-schema.json');
-const officeSchema = require('../schemas/office-schema.json');
-const invoiceSchema = require('../schemas/invoice-schema.json');
-const querystringSchema = require('../schemas/querystring-schema.json');
-const filterProvider = require('../providers/filter-provider');
+const handler = require("./handler");
+const MongoDbProviderFactory = require("../providers/mongodb-provider-factory");
+const Auth0ApiServiceProviderFactory = require("../providers/auth0-api-service-provider-factory");
+const orgSchema = require("../schemas/organization-schema.json");
+const timeEntrySchema = require("../schemas/time-entry-schema.json");
+const officeSchema = require("../schemas/office-schema.json");
+const invoiceSchema = require("../schemas/invoice-schema.json");
+const querystringSchema = require("../schemas/querystring-schema.json");
+const filterProvider = require("../providers/filter-provider");
 
 const schemas = {
-    '/time-entries': timeEntrySchema,
-    '/organizations': orgSchema,
-    '/offices': officeSchema,
-    '/invoices': invoiceSchema
+    "/time-entries": timeEntrySchema,
+    "/organizations": orgSchema,
+    "/offices": officeSchema,
+    "/invoices": invoiceSchema
 };
 
 const cachedDb = null;
 
 function providerFactory(resource) {
-    if (resource === '/users') {
+    if (resource === "/users") {
         return new Auth0ApiServiceProviderFactory();
     }
     return new MongoDbProviderFactory(cachedDb);
@@ -26,16 +26,16 @@ function providerFactory(resource) {
 
 function getCollectionName(resource) {
     const collectionNames = {
-        '/time-entries': 'time-entries',
-        '/time-entries/{id}': 'time-entries',
-        '/organizations': 'organizations',
-        '/organizations/{id}': 'organizations',
-        '/offices': 'offices',
-        '/offices/{id}': 'offices',
-        '/users': 'users',
-        '/invoices': 'invoices',
-        '/invoices/{id}': 'invoices',
-        '/me/organizations': 'organizations'
+        "/time-entries": "time-entries",
+        "/time-entries/{id}": "time-entries",
+        "/organizations": "organizations",
+        "/organizations/{id}": "organizations",
+        "/offices": "offices",
+        "/offices/{id}": "offices",
+        "/users": "users",
+        "/invoices": "invoices",
+        "/invoices/{id}": "invoices",
+        "/me/organizations": "organizations"
     };
     return collectionNames[resource];
 }

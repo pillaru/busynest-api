@@ -53,18 +53,18 @@ function authorize(event, context, cb) {
         // remove "bearer " from token
         const token = event.authorizationToken.substring(7);
 
-        const client = jwksClient({
-            cache: true,
-            rateLimit: true,
-            jwksRequestsPerMinute: 10, // Default value
-            jwksUri: JWKS_URI
-        });
         const decodedToken = jwt.decode(token, { complete: true });
         if (!decodedToken) {
             cb("Unauthorized");
             return;
         }
         const { kid } = decodedToken.header;
+        const client = jwksClient({
+            cache: true,
+            rateLimit: true,
+            jwksRequestsPerMinute: 10, // Default value
+            jwksUri: JWKS_URI
+        });
         client.getSigningKey(kid, (err, key) => {
             if (err) {
                 logError(err);
@@ -78,7 +78,7 @@ function authorize(event, context, cb) {
                 };
                 jwt.verify(token, signingKey, options, (error, decoded) => {
                     if (error) {
-                        logError(error, false);
+                        logError(error);
                         cb("Unauthorized");
                     } else {
                         const response = generatePolicy(decoded.sub, "Allow", event.methodArn);
