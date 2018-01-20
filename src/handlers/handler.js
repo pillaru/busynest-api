@@ -15,6 +15,7 @@ function create(body, provider, schema, context, callback) {
         }));
         return callback(null, helper.badRequest(context, errors));
     }
+
     return provider.create(body)
         .then(helper.handleCreated(callback))
         .catch(helper.handleUnhandledError(callback));

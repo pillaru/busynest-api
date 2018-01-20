@@ -1,12 +1,13 @@
 const handler = require("./handler");
-const MongoDbProviderFactory = require("../providers/mongodb-provider-factory");
-const Auth0ApiServiceProviderFactory = require("../providers/auth0-api-service-provider-factory");
+const providerFactory = require("../providers/provider-factory");
 const orgSchema = require("../schemas/organization-schema.json");
 const timeEntrySchema = require("../schemas/time-entry-schema.json");
 const officeSchema = require("../schemas/office-schema.json");
 const invoiceSchema = require("../schemas/invoice-schema.json");
 const querystringSchema = require("../schemas/querystring-schema.json");
 const filterProvider = require("../providers/filter-provider");
+const authorizationService = require("../services/authorization-service");
+const helper = require("../helpers/handlerHelper");
 
 const schemas = {
     "/time-entries": timeEntrySchema,
@@ -14,15 +15,6 @@ const schemas = {
     "/offices": officeSchema,
     "/invoices": invoiceSchema
 };
-
-const cachedDb = null;
-
-function providerFactory(resource) {
-    if (resource === "/users") {
-        return new Auth0ApiServiceProviderFactory();
-    }
-    return new MongoDbProviderFactory(cachedDb);
-}
 
 function getCollectionName(resource) {
     const collectionNames = {
@@ -52,12 +44,21 @@ function create(event, context, callback) {
             owner: { id: event.requestContext.authorizer.principalId }
         });
     }
-    const schema = getSchema(event.resource);
 
-    const collectionName = getCollectionName(event.resource);
-    const provider = providerFactory(event.resource).create(collectionName);
+    // validate access
+    authorizationService.hasCreateAccess(event.resource, event.requestContext.authorizer, jsonContents)
+        .then((hasAccess) => {
+            if (!hasAccess) {
+                helper.handleForbidden(callback)();
+            } else {
+                const schema = getSchema(event.resource);
 
-    handler.create(jsonContents, provider, schema, context, callback);
+                const collectionName = getCollectionName(event.resource);
+                const provider = providerFactory(event.resource).create(collectionName);
+
+                handler.create(jsonContents, provider, schema, context, callback);
+            }
+        });
 }
 
 function get(event, context, callback) {
