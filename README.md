@@ -1,14 +1,14 @@
-# bizhub-api [![dependencies Status](https://david-dm.org/pillaru/busynest-api/status.svg)](https://david-dm.org/pillaru/busynest-api) [![devDependencies Status](https://david-dm.org/pillaru/busynest-api/dev-status.svg)](https://david-dm.org/pillaru/busynest-api?type=dev)
-
-Create an `.env` file with the following environment variables
-```
-STORMPATH_CLIENT_APIKEY_ID=client_apikey_id
-STORMPATH_CLIENT_APIKEY_SECRET=client_apikey_secret
-STORMPATH_APPLICATION_HREF=stormpath_application_href
-```
+# busynest-api
+[![Build Status](https://travis-ci.org/pillaru/busynest-api.svg)](https://travis-ci.org/pillaru/busynest-api) [![dependencies Status](https://david-dm.org/pillaru/busynest-api/status.svg)](https://david-dm.org/pillaru/busynest-api) [![devDependencies Status](https://david-dm.org/pillaru/busynest-api/dev-status.svg)](https://david-dm.org/pillaru/busynest-api?type=dev)
 
 Make sure mongo db is running on localhost.
 
+Set environment variable of mongodb connection string
 ```
-npm start
+export bizhub_api_mongodb_connectionstring_dev=mongodb://localhost:27017/busynest
+```
+
+Run locally
+```
+sls offline
 ```
