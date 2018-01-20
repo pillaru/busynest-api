@@ -46,19 +46,22 @@ function create(event, context, callback) {
     }
 
     // validate access
-    authorizationService.hasCreateAccess(event.resource, event.requestContext.authorizer, jsonContents)
-        .then((hasAccess) => {
-            if (!hasAccess) {
-                helper.handleForbidden(callback)();
-            } else {
-                const schema = getSchema(event.resource);
+    authorizationService.hasCreateAccess(
+        event.resource,
+        event.requestContext.authorizer,
+        jsonContents
+    ).then((hasAccess) => {
+        if (!hasAccess) {
+            helper.handleForbidden(callback)();
+        } else {
+            const schema = getSchema(event.resource);
 
-                const collectionName = getCollectionName(event.resource);
-                const provider = providerFactory(event.resource).create(collectionName);
+            const collectionName = getCollectionName(event.resource);
+            const provider = providerFactory(event.resource).create(collectionName);
 
-                handler.create(jsonContents, provider, schema, context, callback);
-            }
-        });
+            handler.create(jsonContents, provider, schema, context, callback);
+        }
+    });
 }
 
 function get(event, context, callback) {
