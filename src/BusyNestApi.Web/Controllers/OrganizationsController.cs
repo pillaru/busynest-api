@@ -1,5 +1,8 @@
 using System;
+using System.Threading.Tasks;
+using BusyNest.Domain.Organizations;
 using BusyNestApi.Web.Models;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -9,20 +12,30 @@ namespace BusyNestApi.Web.Controllers
     [Route("[controller]")]
     public class OrganizationsController : ControllerBase
     {
-        private readonly ILogger<OrganizationsController> _logger;
+        private readonly ILogger<OrganizationsController> logger;
+        private readonly IMediator mediator;
 
-        public OrganizationsController(ILogger<OrganizationsController> logger)
+        public OrganizationsController(ILogger<OrganizationsController> logger,
+                                       IMediator mediator)
         {
-            _logger = logger;
+            this.logger = logger;
+            this.mediator = mediator;
         }
 
         [HttpPost]
-        public CreatedAtActionResult Post(CreateOrganizationModel model)
+        public async Task<CreatedAtActionResult> Post(CreateOrganizationModel model)
         {
-            _logger.LogInformation("creating new organization");
+            logger.LogInformation("creating new organization");
 
-            model.Id = OrgId.NewId();
-            return CreatedAtAction("GetById", new { id = model.Id }, model);
+            var command = new CreateOrganizationCommand
+            {
+                Id = OrgId.NewId(),
+                Name = model.Name,
+            };
+
+            var result = await mediator.Send<CreateOrganizationResponse>(command);
+
+            return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
         }
 
         [HttpGet("{id}")]

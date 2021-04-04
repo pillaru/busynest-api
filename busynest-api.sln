@@ -7,6 +7,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{426C3ABC-E51
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusyNestApi.Web", "src\BusyNestApi.Web\BusyNestApi.Web.csproj", "{CDC01249-068E-4B7D-9E0D-AF63AEA4A635}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusyNest.Domain", "src\BusyNest.Domain\BusyNest.Domain.csproj", "{46D12429-A5B8-4086-87D6-B7FBF93F6BDD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,8 +34,21 @@ Global
 		{CDC01249-068E-4B7D-9E0D-AF63AEA4A635}.Release|x64.Build.0 = Release|Any CPU
 		{CDC01249-068E-4B7D-9E0D-AF63AEA4A635}.Release|x86.ActiveCfg = Release|Any CPU
 		{CDC01249-068E-4B7D-9E0D-AF63AEA4A635}.Release|x86.Build.0 = Release|Any CPU
+		{46D12429-A5B8-4086-87D6-B7FBF93F6BDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46D12429-A5B8-4086-87D6-B7FBF93F6BDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46D12429-A5B8-4086-87D6-B7FBF93F6BDD}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{46D12429-A5B8-4086-87D6-B7FBF93F6BDD}.Debug|x64.Build.0 = Debug|Any CPU
+		{46D12429-A5B8-4086-87D6-B7FBF93F6BDD}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{46D12429-A5B8-4086-87D6-B7FBF93F6BDD}.Debug|x86.Build.0 = Debug|Any CPU
+		{46D12429-A5B8-4086-87D6-B7FBF93F6BDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46D12429-A5B8-4086-87D6-B7FBF93F6BDD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{46D12429-A5B8-4086-87D6-B7FBF93F6BDD}.Release|x64.ActiveCfg = Release|Any CPU
+		{46D12429-A5B8-4086-87D6-B7FBF93F6BDD}.Release|x64.Build.0 = Release|Any CPU
+		{46D12429-A5B8-4086-87D6-B7FBF93F6BDD}.Release|x86.ActiveCfg = Release|Any CPU
+		{46D12429-A5B8-4086-87D6-B7FBF93F6BDD}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{CDC01249-068E-4B7D-9E0D-AF63AEA4A635} = {426C3ABC-E515-4130-9BB2-6886FC1E68FD}
+		{46D12429-A5B8-4086-87D6-B7FBF93F6BDD} = {426C3ABC-E515-4130-9BB2-6886FC1E68FD}
 	EndGlobalSection
 EndGlobal

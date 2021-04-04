@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BusyNest.Domain.Organizations;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -32,6 +34,7 @@ namespace BusyNestApi.Web
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "BusyNestApi.Web", Version = "v1" });
             });
+            services.AddMediatR(typeof(CreateOrganizationCommandHandler));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
