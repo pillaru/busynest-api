@@ -7,7 +7,7 @@ namespace BusyNest.DbMigration
     public class CreateOrganizationTableMigration : Migration
     {
         public override void Up() => Create.Table("organizations")
-                .WithColumn("id").AsFixedLengthString(36).PrimaryKey().Identity()
+                .WithColumn("id").AsFixedLengthString(36).PrimaryKey()
                 .WithColumn("name").AsFixedLengthString(120);
         public override void Down() => Delete.Table("organizations");
     }
