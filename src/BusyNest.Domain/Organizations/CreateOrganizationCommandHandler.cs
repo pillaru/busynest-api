@@ -9,6 +9,7 @@ namespace BusyNest.Domain.Organizations
         public Task<CreateOrganizationResponse> Handle(CreateOrganizationCommand request,
                                                        CancellationToken cancellationToken)
         {
+            // todo: save to mysql database table `organizations`
             return Task.FromResult(new CreateOrganizationResponse
             {
                 Id = request.Id,

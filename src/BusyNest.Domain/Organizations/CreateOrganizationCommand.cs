@@ -47,6 +47,7 @@ namespace BusyNest.Domain.Organizations
     {
         private readonly string name;
 
+        // todo: database table has a length restriction of 120 characters for name
         OrgName(string name) => this.name = name;
 
         public override string ToString() => name;

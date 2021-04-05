@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusyNestApi.Web", "src\Busy
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusyNest.Domain", "src\BusyNest.Domain\BusyNest.Domain.csproj", "{46D12429-A5B8-4086-87D6-B7FBF93F6BDD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusyNest.DbMigration", "src\BusyNest.DbMigration\BusyNest.DbMigration.csproj", "{B5F9A4B9-A4A2-4401-BCAE-A25DE67FEC26}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -46,9 +48,22 @@ Global
 		{46D12429-A5B8-4086-87D6-B7FBF93F6BDD}.Release|x64.Build.0 = Release|Any CPU
 		{46D12429-A5B8-4086-87D6-B7FBF93F6BDD}.Release|x86.ActiveCfg = Release|Any CPU
 		{46D12429-A5B8-4086-87D6-B7FBF93F6BDD}.Release|x86.Build.0 = Release|Any CPU
+		{B5F9A4B9-A4A2-4401-BCAE-A25DE67FEC26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5F9A4B9-A4A2-4401-BCAE-A25DE67FEC26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5F9A4B9-A4A2-4401-BCAE-A25DE67FEC26}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B5F9A4B9-A4A2-4401-BCAE-A25DE67FEC26}.Debug|x64.Build.0 = Debug|Any CPU
+		{B5F9A4B9-A4A2-4401-BCAE-A25DE67FEC26}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B5F9A4B9-A4A2-4401-BCAE-A25DE67FEC26}.Debug|x86.Build.0 = Debug|Any CPU
+		{B5F9A4B9-A4A2-4401-BCAE-A25DE67FEC26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5F9A4B9-A4A2-4401-BCAE-A25DE67FEC26}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5F9A4B9-A4A2-4401-BCAE-A25DE67FEC26}.Release|x64.ActiveCfg = Release|Any CPU
+		{B5F9A4B9-A4A2-4401-BCAE-A25DE67FEC26}.Release|x64.Build.0 = Release|Any CPU
+		{B5F9A4B9-A4A2-4401-BCAE-A25DE67FEC26}.Release|x86.ActiveCfg = Release|Any CPU
+		{B5F9A4B9-A4A2-4401-BCAE-A25DE67FEC26}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{CDC01249-068E-4B7D-9E0D-AF63AEA4A635} = {426C3ABC-E515-4130-9BB2-6886FC1E68FD}
 		{46D12429-A5B8-4086-87D6-B7FBF93F6BDD} = {426C3ABC-E515-4130-9BB2-6886FC1E68FD}
+		{B5F9A4B9-A4A2-4401-BCAE-A25DE67FEC26} = {426C3ABC-E515-4130-9BB2-6886FC1E68FD}
 	EndGlobalSection
 EndGlobal

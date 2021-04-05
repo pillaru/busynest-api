@@ -19,3 +19,10 @@ Run locally
 ```
 sls offline
 ```
+
+From src/BusyNest.DbMigration directory, execute the below command to set the connection string
+to mysql database as secret.
+
+```
+dotnet user-secrets set "ConnectionStrings:Default" "Server=localhost;Database=busynest;Uid=dbuser;Pwd=dbpass"
+```
