@@ -1,8 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
 using BusyNest.Domain.Organizations;
+using BusyNest.Persistence;
+using BusyNest.Persistence.TypeHandlers;
+using Dapper;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -18,6 +22,8 @@ namespace BusyNestApi.Web
 {
     public class Startup
     {
+        private const string providerInvariantName = "MySql.Data.MySqlClient";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -28,13 +34,19 @@ namespace BusyNestApi.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "BusyNestApi.Web", Version = "v1" });
             });
             services.AddMediatR(typeof(CreateOrganizationCommandHandler));
+            services.AddTransient<ICreateOrganizationRepository, MySqlCreateOrganizationRepository>();
+            services.AddTransient<IConnectionFactory>((serviceProvider) => new ConnectionFactory(Configuration,
+                                                                                                 "Default",
+                                                                                                 providerInvariantName));
+            DbProviderFactories.RegisterFactory(providerInvariantName, MySql.Data.MySqlClient.MySqlClientFactory.Instance);
+            SqlMapper.AddTypeHandler(new OrgIdSqlTypeHandler());
+            SqlMapper.AddTypeHandler(new OrgNameSqlTypeHandler());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

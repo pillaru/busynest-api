@@ -20,25 +20,40 @@ namespace BusyNest.Domain.Organizations
     [JsonConverter(typeof(OrgIdJsonConverter))]
     public class OrgId
     {
-        private readonly Guid _id;
+        private readonly Guid id;
+
+        private OrgId(Guid id) => this.id = id;
 
         public static OrgId NewId() => new OrgId(Guid.NewGuid());
 
-        private OrgId(Guid id) => _id = id;
+        public static bool TryParse(string candidate, out OrgId orgId)
+        {
+            orgId = null;
+            if (Guid.TryParse(candidate, out var guid))
+            {
+                orgId = new OrgId(guid);
+                return true;
+            }
+            return false;
+        }
+
+        public override string ToString() => id.ToString();
+
+        public override int GetHashCode() => id.GetHashCode();
 
         public class OrgIdJsonConverter : JsonConverter<OrgId>
         {
             public override OrgId Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
             {
-                if (Guid.TryParse(reader.GetString(), out var guid))
+                if (OrgId.TryParse(reader.GetString(), out var id))
                 {
-                    return new OrgId(guid);
+                    return id;
                 }
                 throw new JsonException();
             }
 
             public override void Write(Utf8JsonWriter writer, OrgId value, JsonSerializerOptions options)
-                => writer.WriteStringValue(value._id.ToString());
+                => writer.WriteStringValue(value.ToString());
         }
     }
 
@@ -48,7 +63,7 @@ namespace BusyNest.Domain.Organizations
         private readonly string name;
 
         // todo: database table has a length restriction of 120 characters for name
-        OrgName(string name) => this.name = name;
+        public OrgName(string name) => this.name = name;
 
         public override string ToString() => name;
 
