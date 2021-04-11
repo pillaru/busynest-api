@@ -1,5 +1,7 @@
 using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using BusyNest.Domain;
 using BusyNest.Domain.Organizations;
 using BusyNestApi.Web.Models;
 using MediatR;
@@ -15,12 +17,15 @@ namespace BusyNestApi.Web.Controllers
     {
         private readonly ILogger<OrganizationsController> logger;
         private readonly IMediator mediator;
+        private readonly IUserRepository userRepository;
 
         public OrganizationsController(ILogger<OrganizationsController> logger,
-                                       IMediator mediator)
+                                       IMediator mediator,
+                                       IUserRepository userRepository)
         {
             this.logger = logger;
             this.mediator = mediator;
+            this.userRepository = userRepository;
         }
 
         [HttpPost]
@@ -28,10 +33,15 @@ namespace BusyNestApi.Web.Controllers
         {
             logger.LogInformation("creating new organization");
 
+            var subjectIdClaim = User.FindFirst(claim => claim.Type == ClaimTypes.NameIdentifier);
+            var subjectValue = new GoogleUserId(subjectIdClaim.Value);
+            var user = await userRepository.GetByGoogleId(subjectValue);
+
             var command = new CreateOrganizationCommand
             {
                 Id = OrgId.NewId(),
                 Name = model.Name,
+                User = user,
             };
 
             var result = await mediator.Send<CreateOrganizationResponse>(command);

@@ -1,5 +1,4 @@
 ﻿using FluentMigrator;
-using FluentMigrator.Runner.VersionTableInfo;
 
 namespace BusyNest.DbMigration
 {

@@ -15,8 +15,9 @@ namespace BusyNest.Persistence
         public async Task Create(CreateOrganizationCommand command)
         {
             var connection = connectionFactory.GetConnection();
-            const string sql = @"INSERT organizations(id, name) VALUES (@id, @name);";
-            await connection.ExecuteAsync(sql, new { id = command.Id, name = command.Name });
+            const string sql = @"INSERT INTO organizations(id, name, user_id) VALUES (@id, @name, @userId);";
+            var parameters = new { id = command.Id, name = command.Name, userId = command.User.Id };
+            await connection.ExecuteAsync(sql, parameters);
         }
     }
 }
