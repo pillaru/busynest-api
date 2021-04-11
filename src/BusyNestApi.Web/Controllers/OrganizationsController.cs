@@ -3,13 +3,14 @@ using System.Threading.Tasks;
 using BusyNest.Domain.Organizations;
 using BusyNestApi.Web.Models;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace BusyNestApi.Web.Controllers
 {
-    [ApiController]
-    [Route("[controller]")]
+    [Authorize]
+    [ApiController, Route("[controller]")]
     public class OrganizationsController : ControllerBase
     {
         private readonly ILogger<OrganizationsController> logger;

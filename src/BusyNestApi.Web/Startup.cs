@@ -2,20 +2,26 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using BusyNest.Domain.Organizations;
 using BusyNest.Persistence;
 using BusyNest.Persistence.TypeHandlers;
 using Dapper;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 namespace BusyNestApi.Web
@@ -34,7 +40,16 @@ namespace BusyNestApi.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // services.AddIdentity<IdentityUser, IdentityRole>();
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.Authority = "https://accounts.google.com";
+                options.Audience = "384209977854-c61mf24ovu4rnl5bfut5t1nl5t4k1f9q.apps.googleusercontent.com";
+            });
+
             services.AddControllers();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "BusyNestApi.Web", Version = "v1" });
@@ -63,6 +78,7 @@ namespace BusyNestApi.Web
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
